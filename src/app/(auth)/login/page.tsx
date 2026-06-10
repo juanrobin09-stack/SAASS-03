@@ -50,7 +50,10 @@ export default function LoginPage() {
           </div>
           <span className="font-bold text-white text-lg">LocalScore.ai</span>
         </div>
-        <SignIn />
+        <SignIn
+          afterSignInUrl="/dashboard"
+          signUpUrl="/register"
+        />
       </div>
     </div>
   )
