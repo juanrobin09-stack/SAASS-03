@@ -22,11 +22,11 @@ export function ScoreCard({ score, previousScore, competitorScore, competitorNam
       {/* Main Score */}
       <div className="sm:col-span-1">
         <Card glow className="h-full">
-          <CardContent className="flex flex-col items-center justify-center py-8">
+          <CardContent className="flex flex-col items-center justify-center py-4 sm:py-8">
             <p className="text-dark-400 text-sm mb-3">Votre Score Local</p>
 
             {/* Circular progress */}
-            <div className="relative w-36 h-36 mb-4">
+            <div className="relative w-28 h-28 sm:w-36 sm:h-36 mb-4">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="42" fill="none" stroke="#1e293b" strokeWidth="8" />
                 <motion.circle
@@ -79,7 +79,7 @@ export function ScoreCard({ score, previousScore, competitorScore, competitorNam
       {/* Competitor Score */}
       <div>
         <Card className="h-full">
-          <CardContent className="flex flex-col items-center justify-center py-8">
+          <CardContent className="flex flex-col items-center justify-center py-4 sm:py-8">
             <p className="text-dark-400 text-sm mb-2">Concurrent Principal</p>
             <p className="text-dark-300 text-xs mb-4 font-medium">{competitorName || 'Meilleur concurrent'}</p>
 
@@ -133,7 +133,7 @@ export function ScoreCard({ score, previousScore, competitorScore, competitorNam
       {/* Objective */}
       <div>
         <Card className="h-full">
-          <CardContent className="flex flex-col items-center justify-center py-8">
+          <CardContent className="flex flex-col items-center justify-center py-4 sm:py-8">
             <p className="text-dark-400 text-sm mb-2">Objectif</p>
             <Target className="w-8 h-8 text-primary-400 mb-3" />
 

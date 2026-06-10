@@ -72,10 +72,10 @@ export function AICoach({ message, priorityAction, score, delta, businessName }:
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
           <p className="text-dark-500 text-xs">Mis à jour automatiquement chaque semaine</p>
           <Link href="/dashboard/rapport">
-            <Button variant="ghost" size="sm" className="text-primary-400 hover:text-primary-300">
+            <Button variant="ghost" size="sm" className="text-primary-400 hover:text-primary-300 w-full sm:w-auto">
               Voir le rapport complet
               <ArrowRight className="w-4 h-4" />
             </Button>

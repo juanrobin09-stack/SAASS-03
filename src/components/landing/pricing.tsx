@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { motion, useInView } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import { Check, Zap, Lock, Mail, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -24,6 +25,7 @@ const plans = [
     cta: 'Commencer gratuitement',
     href: '/register',
     highlighted: false,
+    isPro: false,
   },
   {
     name: 'Pro',
@@ -45,12 +47,38 @@ const plans = [
     href: '/register?plan=pro',
     highlighted: true,
     badge: 'Le plus populaire',
+    isPro: true,
   },
 ]
 
 export function Pricing() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-80px' })
+  const { isSignedIn, isLoaded } = useAuth()
+  const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
+
+  const handleProCheckout = async () => {
+    setCheckoutLoading(true)
+    setCheckoutError(null)
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: 'PRO' }),
+      })
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        setCheckoutError(data.error ?? 'Erreur lors du paiement. Réessayez.')
+        setCheckoutLoading(false)
+      }
+    } catch {
+      setCheckoutError('Impossible de contacter le serveur. Vérifiez votre connexion.')
+      setCheckoutLoading(false)
+    }
+  }
 
   return (
     <section id="tarifs" className="py-32 relative overflow-hidden" ref={ref}>
@@ -114,17 +142,39 @@ export function Pricing() {
                   </div>
                 </div>
 
-                <Link href={plan.href} className="block mb-7">
-                  <Button
-                    variant={plan.highlighted ? 'primary' : 'secondary'}
-                    className={`w-full ${plan.highlighted ? 'shadow-glow' : ''}`}
-                    size="lg"
-                  >
-                    {plan.highlighted && <Zap className="w-4 h-4" />}
-                    {plan.cta}
-                    {plan.highlighted && <ArrowRight className="w-4 h-4" />}
-                  </Button>
-                </Link>
+                {/* CTA — auth-aware for Pro plan */}
+                <div className="mb-7">
+                  {isLoaded && isSignedIn && plan.isPro ? (
+                    <div className="space-y-2">
+                      <Button
+                        variant="primary"
+                        className="w-full shadow-glow"
+                        size="lg"
+                        onClick={handleProCheckout}
+                        loading={checkoutLoading}
+                      >
+                        <Zap className="w-4 h-4" />
+                        {plan.cta}
+                        <ArrowRight className="w-4 h-4" />
+                      </Button>
+                      {checkoutError && (
+                        <p className="text-red-400 text-xs text-center">{checkoutError}</p>
+                      )}
+                    </div>
+                  ) : (
+                    <Link href={plan.href} className="block">
+                      <Button
+                        variant={plan.highlighted ? 'primary' : 'secondary'}
+                        className={`w-full ${plan.highlighted ? 'shadow-glow' : ''}`}
+                        size="lg"
+                      >
+                        {plan.highlighted && <Zap className="w-4 h-4" />}
+                        {plan.cta}
+                        {plan.highlighted && <ArrowRight className="w-4 h-4" />}
+                      </Button>
+                    </Link>
+                  )}
+                </div>
 
                 <ul className="space-y-3 flex-1">
                   {plan.features.map((feature) => (

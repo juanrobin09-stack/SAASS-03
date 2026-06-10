@@ -3,13 +3,12 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useClerk } from '@clerk/nextjs'
-import { Settings, Crown, CreditCard, ExternalLink, User, Trash2, Check, AlertCircle } from 'lucide-react'
+import { Crown, CreditCard, ExternalLink, User, Trash2, Check, AlertCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { formatDate } from '@/lib/utils'
-import Link from 'next/link'
 
 interface ParametresClientProps {
   user: { name: string; email: string; plan: string; hasStripe: boolean; periodEnd?: string }
@@ -30,6 +29,30 @@ export function ParametresClient({ user }: ParametresClientProps) {
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [portalLoading, setPortalLoading] = useState(false)
+  const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
+
+  const handleUpgrade = async () => {
+    setCheckoutLoading(true)
+    setCheckoutError(null)
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: 'PRO' }),
+      })
+      const data = await res.json()
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        setCheckoutError(data.error ?? 'Erreur lors du paiement. Réessayez.')
+        setCheckoutLoading(false)
+      }
+    } catch {
+      setCheckoutError('Impossible de contacter le serveur. Vérifiez votre connexion.')
+      setCheckoutLoading(false)
+    }
+  }
 
   const handleUpdateName = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -123,7 +146,7 @@ export function ParametresClient({ user }: ParametresClientProps) {
               <Crown className="w-5 h-5 text-yellow-400" />
               <h3 className="text-white font-semibold">Abonnement</h3>
             </div>
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-white font-medium">Plan {planLabels[user.plan]}</span>
@@ -132,7 +155,10 @@ export function ParametresClient({ user }: ParametresClientProps) {
                 {user.periodEnd && <p className="text-dark-400 text-sm">Renouvellement le {formatDate(user.periodEnd)}</p>}
               </div>
               {user.plan === 'FREE' ? (
-                <Link href="/pricing"><Button size="sm">Passer au Pro</Button></Link>
+                <div className="space-y-1">
+                  <Button size="sm" onClick={handleUpgrade} loading={checkoutLoading}>Passer au Pro</Button>
+                  {checkoutError && <p className="text-red-400 text-xs">{checkoutError}</p>}
+                </div>
               ) : user.hasStripe ? (
                 <Button variant="secondary" size="sm" loading={portalLoading} onClick={handleManageBilling}>
                   <CreditCard className="w-4 h-4" />Gérer la facturation<ExternalLink className="w-3 h-3" />
@@ -148,7 +174,8 @@ export function ParametresClient({ user }: ParametresClientProps) {
                   <li>• Historique complet & alertes</li>
                   <li>• Export PDF premium</li>
                 </ul>
-                <Link href="/pricing"><Button className="w-full" size="sm">Passer au Pro — 19€/mois</Button></Link>
+                <Button className="w-full" size="sm" onClick={handleUpgrade} loading={checkoutLoading}>Passer au Pro — 19€/mois</Button>
+                {checkoutError && <p className="text-red-400 text-xs mt-2 text-center">{checkoutError}</p>}
               </div>
             )}
           </CardContent>
