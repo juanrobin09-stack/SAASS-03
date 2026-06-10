@@ -79,7 +79,7 @@ export function Gamification({ xpPoints, badges = [] }: GamificationProps) {
           </div>
 
           {badges.length > 0 ? (
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
               {badges.slice(0, 8).map((badge, i) => (
                 <motion.div
                   key={badge.slug}
@@ -90,22 +90,22 @@ export function Gamification({ xpPoints, badges = [] }: GamificationProps) {
                   title={badge.name}
                 >
                   <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl border border-dark-700 bg-dark-800/50 group-hover:scale-110 transition-transform"
+                    className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center text-xl sm:text-2xl border border-dark-700 bg-dark-800/50 group-hover:scale-110 transition-transform"
                     style={{ borderColor: badge.color + '30', backgroundColor: badge.color + '10' }}
                   >
                     {badge.icon}
                   </div>
-                  <span className="text-dark-500 text-xs text-center leading-tight">{badge.name}</span>
+                  <span className="hidden sm:block text-dark-500 text-xs text-center leading-tight">{badge.name}</span>
                 </motion.div>
               ))}
             </div>
           ) : (
             <div className="text-center py-4">
-              <div className="grid grid-cols-4 gap-2 mb-3">
+              <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-3">
                 {[1,2,3,4].map(i => (
                   <div key={i} className="flex flex-col items-center gap-1">
-                    <div className="w-12 h-12 rounded-xl bg-dark-800 border border-dark-700 border-dashed flex items-center justify-center">
-                      <Star className="w-5 h-5 text-dark-700" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-dark-800 border border-dark-700 border-dashed flex items-center justify-center">
+                      <Star className="w-4 h-4 sm:w-5 sm:h-5 text-dark-700" />
                     </div>
                   </div>
                 ))}

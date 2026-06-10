@@ -41,7 +41,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right panel — Clerk SignIn */}
-      <div className="flex-1 flex flex-col items-center justify-center p-8 gap-8">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 gap-6 sm:gap-8">
         <div className="lg:hidden">
           <Logo href="/" size="md" />
         </div>

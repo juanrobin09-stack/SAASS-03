@@ -72,7 +72,7 @@ export function Features() {
   const isInView = useInView(ref, { once: true, margin: '-80px' })
 
   return (
-    <section id="fonctionnalites" className="py-32 relative overflow-hidden" ref={ref}>
+    <section id="fonctionnalites" className="py-20 sm:py-32 relative overflow-hidden" ref={ref}>
       <div className="absolute inset-0 bg-dark-950" />
       <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-primary-600/4 rounded-full blur-[100px] pointer-events-none" />

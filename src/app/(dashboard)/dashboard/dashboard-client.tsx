@@ -71,17 +71,17 @@ export function DashboardClient({
       )}
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <MapPin className="w-4 h-4 text-primary-400" />
-            <h1 className="text-2xl font-bold text-white">{business.name}</h1>
-            <Badge variant="info" size="sm">{business.category}</Badge>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
+            <MapPin className="w-4 h-4 text-primary-400 shrink-0" />
+            <h1 className="text-xl sm:text-2xl font-bold text-white truncate">{business.name}</h1>
+            <Badge variant="info" size="sm" className="shrink-0">{business.category}</Badge>
           </div>
           <p className="text-dark-400 text-sm">{business.city} • {weekLabel}</p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-shrink-0">
           {analysis.scoreDelta !== 0 && (
             <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium ${
               analysis.scoreDelta > 0
@@ -89,16 +89,16 @@ export function DashboardClient({
                 : 'bg-red-500/10 text-red-400 border border-red-500/20'
             }`}>
               <TrendingUp className="w-4 h-4" />
-              {analysis.scoreDelta > 0 ? '+' : ''}{analysis.scoreDelta} cette semaine
+              <span>{analysis.scoreDelta > 0 ? '+' : ''}{analysis.scoreDelta}</span>
             </div>
           )}
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="flex items-center gap-2 px-3 py-1.5 bg-dark-800 hover:bg-dark-700 border border-dark-700 rounded-lg text-dark-400 hover:text-white text-sm transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-3 py-2 min-h-[40px] bg-dark-800 hover:bg-dark-700 border border-dark-700 rounded-lg text-dark-400 hover:text-white text-sm transition-all disabled:opacity-50"
           >
-            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-            Nouvelle analyse
+            <RefreshCw className={`w-4 h-4 shrink-0 ${refreshing ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">Nouvelle analyse</span>
           </button>
         </div>
       </div>

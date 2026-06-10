@@ -53,7 +53,7 @@ export function Pricing() {
   const isInView = useInView(ref, { once: true, margin: '-80px' })
 
   return (
-    <section id="tarifs" className="py-32 relative overflow-hidden" ref={ref}>
+    <section id="tarifs" className="py-20 sm:py-32 relative overflow-hidden" ref={ref}>
       <div className="absolute inset-0 bg-dark-950" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-primary-600/5 rounded-full blur-[100px] pointer-events-none" />
 

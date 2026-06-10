@@ -52,7 +52,7 @@ export function HowItWorks() {
   const isInView = useInView(ref, { once: true, margin: '-80px' })
 
   return (
-    <section id="comment-ca-marche" className="py-32 relative overflow-hidden" ref={ref}>
+    <section id="comment-ca-marche" className="py-20 sm:py-32 relative overflow-hidden" ref={ref}>
       <div className="absolute inset-0 bg-dark-900/30" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -61,7 +61,7 @@ export function HowItWorks() {
           initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="text-center mb-20"
+          className="text-center mb-12 sm:mb-20"
         >
           <p className="text-accent-400 text-sm font-semibold tracking-widest uppercase mb-4">
             Simple et puissant

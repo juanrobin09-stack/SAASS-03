@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { auth, currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import { Sidebar } from '@/components/dashboard/sidebar'
+import { MobileNav } from '@/components/dashboard/mobile-nav'
 import { getOrCreateUser } from '@/lib/user'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -16,11 +17,16 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const user = await getOrCreateUser(clerkId, email, name)
 
   return (
-    <div className="flex h-screen bg-dark-950 overflow-hidden">
-      <div className="print:hidden">
+    <div className="flex h-dvh overflow-hidden bg-dark-950">
+      <div className="print:hidden hidden md:flex">
         <Sidebar userName={user.name ?? email} userPlan={user.plan} />
       </div>
-      <main className="flex-1 overflow-y-auto print:overflow-visible">{children}</main>
+      <main className="flex-1 overflow-y-auto print:overflow-visible">
+        <div className="pb-16 md:pb-0">
+          {children}
+        </div>
+      </main>
+      <MobileNav />
     </div>
   )
 }

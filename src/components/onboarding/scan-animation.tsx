@@ -83,7 +83,7 @@ export function ScanAnimation({ businessName, onComplete }: ScanAnimationProps) 
               </motion.div>
             </motion.div>
             {/* Orbit rings */}
-            {[80, 100, 120].map((size, i) => (
+            {[90, 118].map((size, i) => (
               <motion.div
                 key={size}
                 className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary-500/10"

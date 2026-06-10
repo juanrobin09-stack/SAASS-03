@@ -61,23 +61,24 @@ export default function RapportPage() {
   return (
     <div className="p-6 lg:p-8 max-w-4xl mx-auto">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-white mb-1">Rapport Premium</h1>
-          <p className="text-dark-400">Généré le {formatDate(analysis.createdAt)}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-white mb-1">Rapport Premium</h1>
+          <p className="text-dark-400 text-sm">Généré le {formatDate(analysis.createdAt)}</p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-2 flex-wrap">
           {!isPremium && (
             <Link href="/pricing">
               <Button variant="outline" size="sm">
                 <Lock className="w-4 h-4" />
-                Débloquer PDF complet
+                <span className="hidden xs:inline">Débloquer PDF complet</span>
+                <span className="xs:hidden">Pro</span>
               </Button>
             </Link>
           )}
           <Button onClick={handlePrintPDF} size="sm">
             <Download className="w-4 h-4" />
-            Exporter PDF
+            <span>Export PDF</span>
           </Button>
         </div>
       </div>
@@ -103,7 +104,7 @@ export default function RapportPage() {
               </div>
               <div className="text-center">
                 <p className="text-dark-400 text-sm mb-2">Score Local IA</p>
-                <div className="text-7xl font-bold bg-gradient-to-br from-primary-400 to-accent-400 bg-clip-text text-transparent">
+                <div className="text-5xl sm:text-7xl font-bold bg-gradient-to-br from-primary-400 to-accent-400 bg-clip-text text-transparent">
                   {analysis.score}
                 </div>
                 <p className="text-dark-400 text-sm">/100</p>
