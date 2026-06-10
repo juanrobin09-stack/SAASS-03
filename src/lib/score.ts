@@ -64,12 +64,13 @@ export function generateWeeklyTasks(
 ): WeekTask[] {
   const tasks: WeekTask[] = []
 
+  let taskIdx = 0
   // Task based on response rate — most impactful first
   const unanswered = Math.max(0, Math.round(data.googleReviewCount * (1 - data.responseRate)))
   if (data.responseRate < 0.8) {
     const toAnswer = Math.min(unanswered, 5)
     tasks.push({
-      id: `respond-${Date.now()}`,
+      id: `respond-${taskIdx++}`,
       title: `Répondre à ${toAnswer > 0 ? toAnswer : 3} avis clients`,
       description: unanswered > 0
         ? `Vous avez ${unanswered} avis sans réponse. Répondez à au moins ${toAnswer} cette semaine pour gagner en crédibilité.`
@@ -84,7 +85,7 @@ export function generateWeeklyTasks(
   if (data.googlePhotosCount < 50) {
     const photosNeeded = Math.max(1, Math.min(5, 50 - data.googlePhotosCount))
     tasks.push({
-      id: `photos-${Date.now()}`,
+      id: `photos-${taskIdx++}`,
       title: `Ajouter ${photosNeeded} photo${photosNeeded > 1 ? 's' : ''} à votre fiche`,
       description: `Votre fiche a ${data.googlePhotosCount} photo${data.googlePhotosCount > 1 ? 's' : ''}. Les fiches avec 20+ photos obtiennent 35% plus de clics.`,
       category: 'PHOTOS',
@@ -96,7 +97,7 @@ export function generateWeeklyTasks(
   // Google Posts
   if (data.googlePostsCount < 4) {
     tasks.push({
-      id: `post-${Date.now()}`,
+      id: `post-${taskIdx++}`,
       title: 'Publier une actualité sur Google',
       description: 'Partagez une promotion, un événement ou une nouveauté. Les posts augmentent votre visibilité dans les résultats locaux.',
       category: 'POSTS',
@@ -108,7 +109,7 @@ export function generateWeeklyTasks(
   // Website
   if (!data.hasWebsite) {
     tasks.push({
-      id: `website-${Date.now()}`,
+      id: `website-${taskIdx++}`,
       title: 'Associer votre site web à votre fiche',
       description: 'Les établissements avec un site web ont un score de visibilité supérieur de 10 points en moyenne.',
       category: 'WEBSITE',
@@ -121,7 +122,7 @@ export function generateWeeklyTasks(
   if (data.googleReviewCount < 100) {
     const target = data.googleReviewCount < 20 ? 20 : data.googleReviewCount < 50 ? 50 : 100
     tasks.push({
-      id: `reviews-${Date.now()}`,
+      id: `reviews-${taskIdx++}`,
       title: `Obtenir de nouveaux avis (objectif : ${target})`,
       description: `Envoyez un lien Google Avis à vos clients récents. Vous avez ${data.googleReviewCount} avis — votre concurrent en a probablement davantage.`,
       category: 'REVIEWS',
@@ -132,7 +133,7 @@ export function generateWeeklyTasks(
 
   // Info verification
   tasks.push({
-    id: `info-${Date.now()}`,
+    id: `info-${taskIdx++}`,
     title: 'Vérifier vos horaires et coordonnées',
     description: 'Des informations incorrectes peuvent faire fuir des clients. Vérifiez horaires, adresse et numéro de téléphone.',
     category: 'INFO',
@@ -153,10 +154,11 @@ export function generateAlerts(data: {
 }): AlertItem[] {
   const alerts: AlertItem[] = []
   const now = new Date().toISOString()
+  let idx = 0
 
   if (data.competitorScoreDelta && data.competitorScoreDelta > 3) {
     alerts.push({
-      id: `comp-${Date.now()}`,
+      id: `comp-${idx++}`,
       type: 'COMPETITOR_GAIN',
       title: 'Votre concurrent progresse',
       message: `Votre concurrent principal a gagné ${data.competitorScoreDelta} points. Consultez vos missions pour reprendre l'avantage.`,
@@ -168,7 +170,7 @@ export function generateAlerts(data: {
 
   if (data.scoreDelta < -3) {
     alerts.push({
-      id: `drop-${Date.now()}`,
+      id: `drop-${idx++}`,
       type: 'RATING_DROP',
       title: 'Score en baisse de ' + Math.abs(data.scoreDelta) + ' pts',
       message: `Votre score a diminué. Cela peut indiquer un manque d'activité récente sur votre fiche ou de nouveaux avis négatifs.`,
@@ -180,7 +182,7 @@ export function generateAlerts(data: {
 
   if (data.previousRating && data.rating < data.previousRating && data.rating < 4.0) {
     alerts.push({
-      id: `rating-${Date.now()}`,
+      id: `rating-${idx++}`,
       type: 'RATING_DROP',
       title: 'Note Google en baisse',
       message: `Votre note est passée à ${data.rating}/5. Répondez aux avis récents pour montrer votre engagement.`,
@@ -192,7 +194,7 @@ export function generateAlerts(data: {
 
   if (data.scoreDelta > 0) {
     alerts.push({
-      id: `progress-${Date.now()}`,
+      id: `progress-${idx++}`,
       type: 'PROGRESS',
       title: `+${data.scoreDelta} point${data.scoreDelta > 1 ? 's' : ''} cette semaine`,
       message: `Vos actions portent leurs fruits. Continuez sur cette lancée pour dépasser vos concurrents.`,
@@ -202,10 +204,9 @@ export function generateAlerts(data: {
     })
   }
 
-  // Quick win based on actual data
   if (data.reviewCount < 20) {
     alerts.push({
-      id: `quickwin-${Date.now()}`,
+      id: `quickwin-${idx++}`,
       type: 'QUICK_WIN',
       title: 'Gain rapide : demandez des avis',
       message: `Avec seulement ${data.reviewCount} avis, obtenir 5 nouveaux avis cette semaine peut vous faire gagner jusqu'à 6 points.`,
@@ -215,7 +216,7 @@ export function generateAlerts(data: {
     })
   } else {
     alerts.push({
-      id: `quickwin-${Date.now()}`,
+      id: `quickwin-${idx++}`,
       type: 'QUICK_WIN',
       title: 'Gain rapide disponible',
       message: 'Ajouter 3 photos professionnelles cette semaine peut améliorer votre score de 2 à 4 points.',
@@ -279,8 +280,8 @@ export function simulateBusinessData(data: OnboardingData) {
     googlePhotosCount: photosCount,
     googlePostsCount: postsCount,
     hasWebsite: !!data.website || seed % 3 !== 0,
-    hasPhone: !!data.phone || true,
-    hasHours: true,
+    hasPhone: !!data.phone || seed % 4 !== 0,
+    hasHours: seed % 6 !== 0,
     hasDescription: seed % 4 !== 0,
     responseRate: Math.round(responseRate * 100) / 100,
     businessAgeMonths,

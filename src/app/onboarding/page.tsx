@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MapPin, Building2, Tag, Globe, Phone, Target, ArrowRight, Sparkles, Search, Loader2 } from 'lucide-react'
+import { MapPin, Building2, Tag, Globe, Phone, Target, ArrowRight, Sparkles, Search, Loader2, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScanAnimation } from '@/components/onboarding/scan-animation'
@@ -42,6 +42,7 @@ export default function OnboardingPage() {
   })
   const [errors, setErrors] = useState<Partial<FormData>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<{ message: string; isPlanLimit: boolean } | null>(null)
 
   // Autocomplete state
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
@@ -138,6 +139,7 @@ export default function OnboardingPage() {
 
   const handleSubmit = async () => {
     setIsSubmitting(true)
+    setSubmitError(null)
     setScanning(true)
 
     try {
@@ -149,15 +151,20 @@ export default function OnboardingPage() {
 
       if (!res.ok) {
         const err = await res.json()
-        alert(err.error || 'Erreur lors de l\'analyse')
+        const isPlanLimit = res.status === 403
+        setSubmitError({
+          message: err.error || 'Erreur lors de l\'analyse',
+          isPlanLimit,
+        })
         setScanning(false)
         setIsSubmitting(false)
         return
       }
 
-      const data = await res.json()
-      sessionStorage.setItem('analysisResult', JSON.stringify(data))
+      // Data is persisted to DB by the API; dashboard will read from DB directly
+      await res.json()
     } catch {
+      setSubmitError({ message: 'Impossible de contacter le serveur. Vérifiez votre connexion.', isPlanLimit: false })
       setScanning(false)
       setIsSubmitting(false)
     }
@@ -376,6 +383,24 @@ export default function OnboardingPage() {
               <p className="text-dark-500 text-xs -mt-3 px-1">
                 Si vide, nous identifions automatiquement vos concurrents les plus menaçants.
               </p>
+
+              {submitError && (
+                <div className={`flex items-start gap-3 p-4 rounded-xl border ${
+                  submitError.isPlanLimit
+                    ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-300'
+                    : 'bg-red-500/10 border-red-500/30 text-red-300'
+                }`}>
+                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium">{submitError.message}</p>
+                    {submitError.isPlanLimit && (
+                      <a href="/pricing" className="text-xs underline mt-1 block text-yellow-400 hover:text-yellow-300">
+                        Passer au plan Pro pour relancer une analyse →
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )}
 
               <div className="flex gap-3">
                 <Button variant="secondary" onClick={() => setStep(1)} className="flex-1" size="lg">

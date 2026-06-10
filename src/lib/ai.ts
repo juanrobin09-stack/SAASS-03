@@ -65,26 +65,3 @@ Format JSON strict :
   }
 }
 
-export async function generateWeeklyInsight(data: {
-  businessName: string
-  score: number
-  topTask: string
-  completedTasks: number
-  totalTasks: number
-}): Promise<string> {
-  try {
-    const response = await getClient().messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 200,
-      messages: [{
-        role: 'user',
-        content: `Génère une phrase d'encouragement courte et percutante pour ${data.businessName} qui a un score de ${data.score}/100 et a complété ${data.completedTasks}/${data.totalTasks} missions. Priorité : ${data.topTask}. Maximum 2 phrases.`,
-      }],
-    })
-
-    const content = response.content[0]
-    return content.type === 'text' ? content.text : 'Continuez votre progression !'
-  } catch {
-    return `Avec ${data.completedTasks} missions complétées, vous progressez vers le sommet. Continuez !`
-  }
-}

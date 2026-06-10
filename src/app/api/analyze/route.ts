@@ -222,6 +222,21 @@ export async function POST(req: Request) {
     const xpGain = 50 + (scoreDelta > 0 ? scoreDelta * 5 : 0)
     const totalXp = (lastAnalysis?.xpPoints ?? 0) + xpGain
 
+    // Persist alerts: replace previous alerts with fresh ones from this analysis
+    await prisma.alert.deleteMany({ where: { businessId: business.id } })
+    for (const alert of alerts) {
+      await prisma.alert.create({
+        data: {
+          businessId: business.id,
+          type: alert.type,
+          title: alert.title,
+          message: alert.message,
+          priority: alert.priority,
+          isRead: false,
+        },
+      })
+    }
+
     const analysis = await prisma.analysis.create({
       data: {
         businessId: business.id,

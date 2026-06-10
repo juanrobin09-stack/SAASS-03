@@ -41,21 +41,6 @@ export const PLANS = {
     ],
     highlighted: true,
   },
-  BUSINESS: {
-    id: 'BUSINESS' as const,
-    name: 'Business',
-    price: 39,
-    priceId: process.env.STRIPE_BUSINESS_PRICE_ID,
-    features: [
-      'Jusqu\'à 5 établissements',
-      'Toutes les fonctionnalités Pro',
-      'Comparaisons multiples',
-      'Exports avancés',
-      'Rapports automatiques',
-      'Support prioritaire',
-      'API d\'accès',
-    ],
-  },
 }
 
 export async function createCheckoutSession(userId: string, priceId: string, customerId?: string) {
@@ -77,6 +62,6 @@ export async function createCheckoutSession(userId: string, priceId: string, cus
 export async function createPortalSession(customerId: string) {
   return stripe.billingPortal.sessions.create({
     customer: customerId,
-    return_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings`,
+    return_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/parametres`,
   })
 }

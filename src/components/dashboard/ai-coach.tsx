@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Brain, ArrowRight, Sparkles, TrendingUp, AlertCircle, CheckCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 interface AICoachProps {
   message: string
@@ -73,10 +74,12 @@ export function AICoach({ message, priorityAction, score, delta, businessName }:
 
         <div className="mt-4 flex items-center justify-between">
           <p className="text-dark-500 text-xs">Mis à jour automatiquement chaque semaine</p>
-          <Button variant="ghost" size="sm" className="text-primary-400 hover:text-primary-300">
-            Voir toutes les recommandations
-            <ArrowRight className="w-4 h-4" />
-          </Button>
+          <Link href="/dashboard/rapport">
+            <Button variant="ghost" size="sm" className="text-primary-400 hover:text-primary-300">
+              Voir le rapport complet
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
         </div>
       </CardContent>
     </Card>

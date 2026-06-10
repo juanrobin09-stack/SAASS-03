@@ -174,7 +174,7 @@ export function ParametresClient({ user }: ParametresClientProps) {
                 <p className="text-red-300 text-sm">⚠️ Irréversible. Votre abonnement sera annulé et toutes vos données supprimées.</p>
                 <div>
                   <label className="block text-sm text-dark-300 mb-1.5">Tapez <span className="text-white font-mono">{user.email}</span> pour confirmer</label>
-                  <input type="email" placeholder={user.email} value={deleteConfirm} onChange={e => setDeleteConfirm(e.target.value)}
+                  <input type="text" placeholder={user.email} value={deleteConfirm} onChange={e => setDeleteConfirm(e.target.value)}
                     className="w-full rounded-lg border border-red-500/30 bg-dark-900 text-white px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-red-500 text-sm" />
                 </div>
                 <div className="flex gap-3">
