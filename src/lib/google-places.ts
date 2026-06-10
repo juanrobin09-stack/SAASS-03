@@ -17,24 +17,24 @@ export interface PlaceData {
   address: string
 }
 
-const CATEGORY_TO_TYPE: Record<string, { type: string; radius: number }> = {
-  'Restaurant':                    { type: 'restaurant',         radius: 1500 },
-  'Boulangerie / Pâtisserie':      { type: 'bakery',             radius: 1500 },
-  'Coiffeur / Salon de beauté':    { type: 'hair_care',          radius: 2000 },
-  'Hôtel':                         { type: 'lodging',            radius: 5000 },
-  'Pharmacie':                     { type: 'pharmacy',           radius: 3000 },
-  'Médecin / Cabinet médical':     { type: 'doctor',             radius: 3000 },
-  'Dentiste':                      { type: 'dentist',            radius: 3000 },
-  'Garage / Auto':                 { type: 'car_repair',         radius: 5000 },
-  'Supermarché / Épicerie':        { type: 'supermarket',        radius: 3000 },
-  'Gym / Salle de sport':          { type: 'gym',                radius: 5000 },
-  'Agence immobilière':            { type: 'real_estate_agency', radius: 3000 },
-  'Avocat / Notaire':              { type: 'lawyer',             radius: 5000 },
-  'Vétérinaire':                   { type: 'veterinary_care',    radius: 5000 },
-  'Bar / Café':                    { type: 'bar',                radius: 1500 },
-  'Boutique de vêtements':         { type: 'clothing_store',     radius: 2000 },
-  'Plombier / Électricien':        { type: 'plumber',            radius: 10000 },
-  'Fleuriste':                     { type: 'florist',            radius: 5000 },
+const CATEGORY_TO_TYPE: Record<string, { types: string[]; radius: number }> = {
+  'Restaurant':                    { types: ['restaurant'],                          radius: 1500 },
+  'Boulangerie / Pâtisserie':      { types: ['bakery'],                              radius: 1500 },
+  'Coiffeur / Salon de beauté':    { types: ['hair_care', 'beauty_salon'],           radius: 2000 },
+  'Hôtel':                         { types: ['lodging'],                             radius: 5000 },
+  'Pharmacie':                     { types: ['pharmacy', 'drugstore'],               radius: 3000 },
+  'Médecin / Cabinet médical':     { types: ['doctor'],                              radius: 3000 },
+  'Dentiste':                      { types: ['dentist'],                             radius: 3000 },
+  'Garage / Auto':                 { types: ['car_repair'],                          radius: 5000 },
+  'Supermarché / Épicerie':        { types: ['supermarket', 'grocery_store'],        radius: 3000 },
+  'Gym / Salle de sport':          { types: ['gym'],                                 radius: 5000 },
+  'Agence immobilière':            { types: ['real_estate_agency'],                  radius: 3000 },
+  'Avocat / Notaire':              { types: ['lawyer'],                              radius: 5000 },
+  'Vétérinaire':                   { types: ['veterinary_care'],                     radius: 5000 },
+  'Bar / Café':                    { types: ['bar', 'cafe'],                         radius: 1500 },
+  'Boutique de vêtements':         { types: ['clothing_store'],                      radius: 2000 },
+  'Plombier / Électricien':        { types: ['plumber', 'electrician'],              radius: 10000 },
+  'Fleuriste':                     { types: ['florist'],                             radius: 5000 },
 }
 
 function parsePlaceResult(place: any): PlaceData {
@@ -99,7 +99,7 @@ export async function searchNearbyCompetitors(
   // Unknown category → use text search instead of nearby
   if (!mapping) return []
 
-  const { type: placeType, radius } = mapping
+  const { types: placeTypes, radius } = mapping
 
   try {
     const res = await fetch(`${BASE}/places:searchNearby`, {
@@ -114,8 +114,8 @@ export async function searchNearbyCompetitors(
         ].join(','),
       },
       body: JSON.stringify({
-        // primaryType = type PRINCIPAL uniquement → évite les faux positifs
-        includedPrimaryTypes: [placeType],
+        // primaryType only → strict same-sector matching, avoids false positives
+        includedPrimaryTypes: placeTypes,
         maxResultCount: 10,
         locationRestriction: {
           circle: {
