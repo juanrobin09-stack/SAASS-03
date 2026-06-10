@@ -1,0 +1,243 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(cuid())
+  name            String?
+  email           String    @unique
+  emailVerified   DateTime?
+  image           String?
+  password        String?
+  role            UserRole  @default(USER)
+  plan            PlanType  @default(FREE)
+  stripeCustomerId String?  @unique
+  stripeSubscriptionId String? @unique
+  stripePriceId   String?
+  stripeCurrentPeriodEnd DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  accounts        Account[]
+  sessions        Session[]
+  businesses      Business[]
+  badges          UserBadge[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Business {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  address     String
+  city        String
+  category    String
+  website     String?
+  phone       String?
+  placeId     String?
+  lat         Float?
+  lng         Float?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  analyses    Analysis[]
+  competitors Competitor[]
+  alerts      Alert[]
+  weeklyTasks WeeklyTask[]
+
+  @@map("businesses")
+}
+
+model Analysis {
+  id            String   @id @default(cuid())
+  businessId    String
+  score         Int
+  previousScore Int?
+  scoreDelta    Int?
+
+  googleRating       Float?
+  googleReviewCount  Int?
+  googlePhotosCount  Int?
+  googlePostsCount   Int?
+  hasWebsite         Boolean @default(false)
+  hasPhone           Boolean @default(false)
+  hasHours           Boolean @default(false)
+  hasDescription     Boolean @default(false)
+  responseRate       Float?
+
+  competitorScore    Int?
+  competitorName     String?
+  scoreDiff          Int?
+
+  coachMessage       String? @db.Text
+  priorityAction     String?
+  weekInsights       Json?
+
+  level              Int     @default(1)
+  xpPoints           Int     @default(0)
+
+  createdAt     DateTime @default(now())
+
+  business      Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("analyses")
+}
+
+model Competitor {
+  id          String   @id @default(cuid())
+  businessId  String
+  name        String
+  address     String?
+  placeId     String?
+  score       Int?
+  reviewCount Int?
+  rating      Float?
+  isMain      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("competitors")
+}
+
+model Alert {
+  id          String      @id @default(cuid())
+  businessId  String
+  type        AlertType
+  title       String
+  message     String
+  isRead      Boolean     @default(false)
+  priority    AlertPriority @default(MEDIUM)
+  createdAt   DateTime    @default(now())
+
+  business    Business    @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("alerts")
+}
+
+model WeeklyTask {
+  id          String     @id @default(cuid())
+  businessId  String
+  title       String
+  description String?
+  category    TaskCategory
+  impact      Int        @default(1)
+  isCompleted Boolean    @default(false)
+  weekOf      DateTime
+  completedAt DateTime?
+  createdAt   DateTime   @default(now())
+
+  business    Business   @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@map("weekly_tasks")
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String
+  icon        String
+  color       String
+  xpReward    Int      @default(50)
+
+  users       UserBadge[]
+
+  @@map("badges")
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  badgeId   String
+  earnedAt  DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@map("user_badges")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum PlanType {
+  FREE
+  PRO
+  BUSINESS
+}
+
+enum AlertType {
+  COMPETITOR_GAIN
+  RATING_DROP
+  QUICK_WIN
+  PROGRESS
+  WEEKLY_DIGEST
+}
+
+enum AlertPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskCategory {
+  REVIEWS
+  PHOTOS
+  POSTS
+  INFO
+  WEBSITE
+  ENGAGEMENT
+}

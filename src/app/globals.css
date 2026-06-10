@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 3%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 5%;
+    --card-foreground: 210 40% 98%;
+    --border: 217 33% 12%;
+    --input: 217 33% 12%;
+    --ring: 239 84% 67%;
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-dark-800;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-dark-950 text-white font-sans antialiased;
+  }
+
+  ::selection {
+    @apply bg-primary-500/30 text-white;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-1.5;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-dark-950;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-dark-700 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-dark-600;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-400 via-accent-400 to-primary-400 bg-clip-text text-transparent;
+  }
+
+  .glass {
+    @apply bg-dark-900/50 backdrop-blur-xl border border-dark-800;
+  }
+
+  .gradient-border {
+    position: relative;
+    background-clip: padding-box;
+  }
+
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    margin: -1px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, #6366f1, #10b981);
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-700 hover:to-primary-600 text-white shadow-glow hover:shadow-glow-lg transition-all duration-200 rounded-lg font-medium;
+  }
+
+  .input-field {
+    @apply w-full rounded-lg border border-dark-700 bg-dark-900 text-white placeholder:text-dark-500 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all;
+  }
+}
