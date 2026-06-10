@@ -17,20 +17,24 @@ export interface PlaceData {
   address: string
 }
 
-const CATEGORY_TO_TYPE: Record<string, string> = {
-  'Restaurant': 'restaurant',
-  'Boulangerie / Pâtisserie': 'bakery',
-  'Coiffeur / Salon de beauté': 'hair_care',
-  'Hôtel': 'lodging',
-  'Pharmacie': 'pharmacy',
-  'Médecin / Cabinet médical': 'doctor',
-  'Garage / Auto': 'car_repair',
-  'Supermarché / Épicerie': 'grocery_store',
-  'Salle de sport / Fitness': 'gym',
-  'Immobilier': 'real_estate_agency',
-  'Avocat / Notaire': 'lawyer',
-  'Dentiste': 'dentist',
-  'Vétérinaire': 'veterinary_care',
+const CATEGORY_TO_TYPE: Record<string, { type: string; radius: number }> = {
+  'Restaurant':                    { type: 'restaurant',         radius: 1500 },
+  'Boulangerie / Pâtisserie':      { type: 'bakery',             radius: 1500 },
+  'Coiffeur / Salon de beauté':    { type: 'hair_care',          radius: 2000 },
+  'Hôtel':                         { type: 'lodging',            radius: 5000 },
+  'Pharmacie':                     { type: 'pharmacy',           radius: 3000 },
+  'Médecin / Cabinet médical':     { type: 'doctor',             radius: 3000 },
+  'Dentiste':                      { type: 'dentist',            radius: 3000 },
+  'Garage / Auto':                 { type: 'car_repair',         radius: 5000 },
+  'Supermarché / Épicerie':        { type: 'supermarket',        radius: 3000 },
+  'Gym / Salle de sport':          { type: 'gym',                radius: 5000 },
+  'Agence immobilière':            { type: 'real_estate_agency', radius: 3000 },
+  'Avocat / Notaire':              { type: 'lawyer',             radius: 5000 },
+  'Vétérinaire':                   { type: 'veterinary_care',    radius: 5000 },
+  'Bar / Café':                    { type: 'bar',                radius: 1500 },
+  'Boutique de vêtements':         { type: 'clothing_store',     radius: 2000 },
+  'Plombier / Électricien':        { type: 'plumber',            radius: 10000 },
+  'Fleuriste':                     { type: 'florist',            radius: 5000 },
 }
 
 function parsePlaceResult(place: any): PlaceData {
@@ -91,7 +95,11 @@ export async function searchNearbyCompetitors(
 ): Promise<PlaceData[]> {
   if (!PLACES_API_KEY || !lat || !lng) return []
 
-  const placeType = CATEGORY_TO_TYPE[category] ?? 'establishment'
+  const mapping = CATEGORY_TO_TYPE[category]
+  // Unknown category → use text search instead of nearby
+  if (!mapping) return []
+
+  const { type: placeType, radius } = mapping
 
   try {
     const res = await fetch(`${BASE}/places:searchNearby`, {
@@ -106,22 +114,24 @@ export async function searchNearbyCompetitors(
         ].join(','),
       },
       body: JSON.stringify({
-        includedTypes: [placeType],
+        // primaryType = type PRINCIPAL uniquement → évite les faux positifs
+        includedPrimaryTypes: [placeType],
         maxResultCount: 10,
         locationRestriction: {
           circle: {
             center: { latitude: lat, longitude: lng },
-            radius: 2000,
+            radius,
           },
         },
         languageCode: 'fr',
+        rankPreference: 'POPULARITY',
       }),
     })
 
     if (!res.ok) return []
     const json = await res.json()
     return (json.places ?? [])
-      .filter((p: any) => p.id !== excludePlaceId)
+      .filter((p: any) => p.id !== excludePlaceId && p.userRatingCount > 0)
       .slice(0, 5)
       .map(parsePlaceResult)
   } catch {
