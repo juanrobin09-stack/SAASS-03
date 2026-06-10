@@ -10,10 +10,12 @@ export const metadata: Metadata = {
   description: 'Découvrez pourquoi votre concurrent attire plus de clients et suivez votre progression semaine après semaine avec notre Score Local IA.',
   keywords: 'SEO local, visibilité Google, score local, référencement local, Google My Business',
   authors: [{ name: 'LocalScore.ai' }],
+  metadataBase: new URL('https://locentra.space'),
   openGraph: {
     title: 'LocalScore.ai — Dominez votre visibilité locale',
     description: 'Score Local IA en temps réel. Analyse concurrentielle. Coach IA personnalisé.',
     type: 'website',
+    url: 'https://locentra.space',
     locale: 'fr_FR',
   },
   twitter: {
