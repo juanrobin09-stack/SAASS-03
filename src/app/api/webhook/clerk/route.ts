@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { NextResponse } from 'next/server'
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
