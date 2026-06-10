@@ -13,10 +13,11 @@ import {
   simulateCompetitorData,
 } from '@/lib/score'
 import { generateCoachMessage } from '@/lib/ai'
+import { searchBusiness, searchNearbyCompetitors } from '@/lib/google-places'
 
 const schema = z.object({
   businessName: z.string().min(2),
-  address: z.string().min(0),
+  address: z.string().optional().default(''),
   city: z.string().min(2),
   category: z.string().min(2),
   website: z.string().optional(),
@@ -32,7 +33,6 @@ export async function POST(req: Request) {
     const clerkUser = await currentUser()
     const email = clerkUser?.emailAddresses[0]?.emailAddress ?? ''
     const name = [clerkUser?.firstName, clerkUser?.lastName].filter(Boolean).join(' ') || null
-
     const user = await getOrCreateUser(clerkId, email, name)
 
     if (user.plan === 'FREE') {
@@ -47,10 +47,36 @@ export async function POST(req: Request) {
       }
     }
 
-    const body = await req.json()
-    const data = schema.parse(body)
+    const data = schema.parse(await req.json())
 
-    const businessData = simulateBusinessData(data)
+    // — Fetch real data from Google Places API (fallback to simulation) —
+    let businessData: ReturnType<typeof simulateBusinessData>
+    let realPlace = null
+    let dataSource: 'google' | 'simulated' = 'simulated'
+
+    if (process.env.GOOGLE_PLACES_API_KEY) {
+      realPlace = await searchBusiness(data.businessName, data.city)
+      if (realPlace) {
+        dataSource = 'google'
+        businessData = {
+          googleRating: realPlace.rating,
+          googleReviewCount: realPlace.reviewCount,
+          googlePhotosCount: Math.max(realPlace.photosCount, 0),
+          googlePostsCount: 0,
+          hasWebsite: realPlace.hasWebsite || !!data.website,
+          hasPhone: realPlace.hasPhone || !!data.phone,
+          hasHours: realPlace.hasHours,
+          hasDescription: true,
+          responseRate: 0.4,
+          businessAgeMonths: 24,
+        }
+      }
+    }
+
+    if (!businessData!) {
+      businessData = simulateBusinessData(data)
+    }
+
     const { score, breakdown } = calculateLocalScore(businessData)
 
     let business = await prisma.business.findFirst({
@@ -62,11 +88,25 @@ export async function POST(req: Request) {
         data: {
           userId: user.id,
           name: data.businessName,
-          address: data.address,
+          address: data.address || realPlace?.address || '',
           city: data.city,
           category: data.category,
-          website: data.website,
-          phone: data.phone,
+          website: data.website || realPlace?.website,
+          phone: data.phone || realPlace?.phone,
+          placeId: realPlace?.placeId,
+          lat: realPlace?.lat,
+          lng: realPlace?.lng,
+        },
+      })
+    } else if (realPlace && !business.placeId) {
+      await prisma.business.update({
+        where: { id: business.id },
+        data: {
+          placeId: realPlace.placeId,
+          lat: realPlace.lat,
+          lng: realPlace.lng,
+          website: business.website || realPlace.website,
+          phone: business.phone || realPlace.phone,
         },
       })
     }
@@ -77,7 +117,53 @@ export async function POST(req: Request) {
     })
 
     const scoreDelta = lastAnalysis ? score - lastAnalysis.score : 0
-    const competitor = simulateCompetitorData(data.competitorName, score)
+
+    // — Competitor: real Google data or simulation —
+    let competitor: { name: string; score: number; rating: number; reviewCount: number; scoreDiff: number } | null = null
+
+    if (process.env.GOOGLE_PLACES_API_KEY && realPlace?.lat && realPlace?.lng) {
+      const nearbyCompetitors = await searchNearbyCompetitors(
+        data.category,
+        realPlace.lat,
+        realPlace.lng,
+        realPlace.placeId
+      )
+
+      // Pick the top competitor (highest rating + reviews)
+      const topCompetitor = nearbyCompetitors
+        .filter(c => c.name !== data.businessName)
+        .sort((a, b) => (b.rating * Math.log(b.reviewCount + 1)) - (a.rating * Math.log(a.reviewCount + 1)))[0]
+
+      if (topCompetitor) {
+        const compData = calculateLocalScore({
+          googleRating: topCompetitor.rating,
+          googleReviewCount: topCompetitor.reviewCount,
+          googlePhotosCount: topCompetitor.photosCount,
+          googlePostsCount: 0,
+          hasWebsite: topCompetitor.hasWebsite,
+          hasPhone: topCompetitor.hasPhone,
+          hasHours: topCompetitor.hasHours,
+          hasDescription: true,
+          responseRate: 0.6,
+          businessAgeMonths: 36,
+        })
+        competitor = {
+          name: topCompetitor.name,
+          score: compData.score,
+          rating: topCompetitor.rating,
+          reviewCount: topCompetitor.reviewCount,
+          scoreDiff: compData.score - score,
+        }
+      }
+    }
+
+    // Fall back to user-provided competitor name or simulation
+    if (!competitor) {
+      if (data.competitorName) {
+        const simComp = simulateCompetitorData(data.competitorName, score)
+        if (simComp) competitor = simComp
+      }
+    }
 
     if (competitor) {
       await prisma.competitor.upsert({
@@ -91,7 +177,12 @@ export async function POST(req: Request) {
           reviewCount: competitor.reviewCount,
           isMain: true,
         },
-        update: { score: competitor.score, rating: competitor.rating, reviewCount: competitor.reviewCount },
+        update: {
+          score: competitor.score,
+          rating: competitor.rating,
+          reviewCount: competitor.reviewCount,
+          name: competitor.name,
+        },
       })
     }
 
@@ -101,7 +192,7 @@ export async function POST(req: Request) {
       { key: 'googleProfile', value: breakdown.googleProfile, max: 15 },
       { key: 'posts', value: breakdown.posts, max: 10 },
     ]
-    const priorityWeakness = weaknesses.sort((a, b) => (a.value / a.max) - (b.value / b.max))[0]
+    const priorityWeakness = [...weaknesses].sort((a, b) => (a.value / a.max) - (b.value / b.max))[0]
     const weaknessLabels: Record<string, string> = {
       reviews: 'Avis Google', photos: 'Photos', googleProfile: 'Fiche Google', posts: 'Publications Google',
     }
@@ -122,7 +213,11 @@ export async function POST(req: Request) {
     })
 
     const tasks = generateWeeklyTasks(score, businessData)
-    const alerts = generateAlerts({ scoreDelta, rating: businessData.googleRating, reviewCount: businessData.googleReviewCount })
+    const alerts = generateAlerts({
+      scoreDelta,
+      rating: businessData.googleRating,
+      reviewCount: businessData.googleReviewCount,
+    })
 
     const xpGain = 50 + (scoreDelta > 0 ? scoreDelta * 5 : 0)
     const totalXp = (lastAnalysis?.xpPoints ?? 0) + xpGain
@@ -131,14 +226,17 @@ export async function POST(req: Request) {
       data: {
         businessId: business.id,
         score, previousScore: lastAnalysis?.score, scoreDelta,
-        googleRating: businessData.googleRating, googleReviewCount: businessData.googleReviewCount,
-        googlePhotosCount: businessData.googlePhotosCount, googlePostsCount: businessData.googlePostsCount,
+        googleRating: businessData.googleRating,
+        googleReviewCount: businessData.googleReviewCount,
+        googlePhotosCount: businessData.googlePhotosCount,
+        googlePostsCount: businessData.googlePostsCount,
         hasWebsite: businessData.hasWebsite, hasPhone: businessData.hasPhone,
         hasHours: businessData.hasHours, hasDescription: businessData.hasDescription,
         responseRate: businessData.responseRate,
-        competitorScore: competitor?.score, competitorName: competitor?.name, scoreDiff: competitor?.scoreDiff,
+        competitorScore: competitor?.score, competitorName: competitor?.name,
+        scoreDiff: competitor?.scoreDiff,
         coachMessage, priorityAction, xpPoints: totalXp,
-        weekInsights: { breakdown, tasks, alerts } as any,
+        weekInsights: { breakdown, dataSource } as any,
       },
     })
 
@@ -148,16 +246,27 @@ export async function POST(req: Request) {
 
     for (const task of tasks) {
       await prisma.weeklyTask.create({
-        data: { businessId: business.id, title: task.title, description: task.description || '', category: task.category, impact: task.impact, weekOf },
+        data: {
+          businessId: business.id,
+          title: task.title,
+          description: task.description || '',
+          category: task.category,
+          impact: task.impact,
+          weekOf,
+        },
       })
     }
 
     return NextResponse.json({
       analysisId: analysis.id, businessId: business.id,
       score, previousScore: lastAnalysis?.score, scoreDelta,
-      breakdown, googleRating: businessData.googleRating, googleReviewCount: businessData.googleReviewCount,
-      googlePhotosCount: businessData.googlePhotosCount, hasWebsite: businessData.hasWebsite,
+      breakdown,
+      googleRating: businessData.googleRating,
+      googleReviewCount: businessData.googleReviewCount,
+      googlePhotosCount: businessData.googlePhotosCount,
+      hasWebsite: businessData.hasWebsite,
       competitor, coachMessage, priorityAction, tasks, alerts, xpPoints: totalXp,
+      dataSource,
     })
   } catch (error) {
     if (error instanceof z.ZodError) return NextResponse.json({ error: 'Données invalides' }, { status: 400 })

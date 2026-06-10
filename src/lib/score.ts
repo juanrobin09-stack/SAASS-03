@@ -12,19 +12,15 @@ export function calculateLocalScore(data: {
   responseRate: number
   businessAgeMonths: number
 }): { score: number; breakdown: ScoreBreakdown } {
-  const reviewScore = Math.min(
-    30,
-    Math.round(
-      (Math.min(data.googleReviewCount, 200) / 200) * 20 +
-      ((data.googleRating - 3) / 2) * 10
-    )
-  )
+  // Reviews + rating: max 30 pts
+  const reviewCountScore = (Math.min(data.googleReviewCount, 200) / 200) * 20
+  const ratingScore = data.googleRating >= 3 ? ((data.googleRating - 3) / 2) * 10 : 0
+  const reviewScore = Math.min(30, Math.round(reviewCountScore + ratingScore))
 
-  const photosScore = Math.min(
-    20,
-    Math.round((Math.min(data.googlePhotosCount, 100) / 100) * 20)
-  )
+  // Photos: max 20 pts
+  const photosScore = Math.min(20, Math.round((Math.min(data.googlePhotosCount, 100) / 100) * 20))
 
+  // Google profile completeness: max 15 pts
   const profileScore = Math.round(
     (data.hasWebsite ? 5 : 0) +
     (data.hasPhone ? 3 : 0) +
@@ -32,22 +28,16 @@ export function calculateLocalScore(data: {
     (data.hasDescription ? 3 : 0)
   )
 
-  const postsScore = Math.min(
-    10,
-    Math.round((Math.min(data.googlePostsCount, 12) / 12) * 10)
-  )
+  // Posts activity: max 10 pts
+  const postsScore = Math.min(10, Math.round((Math.min(data.googlePostsCount, 12) / 12) * 10))
 
-  const engagementScore = Math.min(
-    15,
-    Math.round(data.responseRate * 15)
-  )
+  // Response rate to reviews: max 15 pts
+  const engagementScore = Math.min(15, Math.round(data.responseRate * 15))
 
+  // Website presence: max 10 pts
   const websiteScore = data.hasWebsite ? 10 : 0
 
-  const total = Math.min(
-    100,
-    reviewScore + photosScore + profileScore + postsScore + engagementScore + websiteScore
-  )
+  const total = Math.min(100, reviewScore + photosScore + profileScore + postsScore + engagementScore + websiteScore)
 
   return {
     score: total,
@@ -74,65 +64,77 @@ export function generateWeeklyTasks(
 ): WeekTask[] {
   const tasks: WeekTask[] = []
 
+  // Task based on response rate — most impactful first
+  const unanswered = Math.max(0, Math.round(data.googleReviewCount * (1 - data.responseRate)))
   if (data.responseRate < 0.8) {
+    const toAnswer = Math.min(unanswered, 5)
     tasks.push({
-      id: 'respond-reviews',
-      title: 'Répondre à vos avis clients',
-      description: `Répondez à au moins 3 avis cette semaine pour améliorer votre taux de réponse`,
+      id: `respond-${Date.now()}`,
+      title: `Répondre à ${toAnswer > 0 ? toAnswer : 3} avis clients`,
+      description: unanswered > 0
+        ? `Vous avez ${unanswered} avis sans réponse. Répondez à au moins ${toAnswer} cette semaine pour gagner en crédibilité.`
+        : 'Maintenez un taux de réponse élevé. Répondez aux nouveaux avis sous 48h.',
       category: 'REVIEWS',
       impact: 5,
       isCompleted: false,
     })
   }
 
-  if (data.googlePhotosCount < 20) {
+  // Task based on photos count
+  if (data.googlePhotosCount < 50) {
+    const photosNeeded = Math.max(1, Math.min(5, 50 - data.googlePhotosCount))
     tasks.push({
-      id: 'add-photos',
-      title: 'Ajouter des photos professionnelles',
-      description: 'Publiez 3-5 nouvelles photos de votre établissement, produits ou équipe',
+      id: `photos-${Date.now()}`,
+      title: `Ajouter ${photosNeeded} photo${photosNeeded > 1 ? 's' : ''} à votre fiche`,
+      description: `Votre fiche a ${data.googlePhotosCount} photo${data.googlePhotosCount > 1 ? 's' : ''}. Les fiches avec 20+ photos obtiennent 35% plus de clics.`,
       category: 'PHOTOS',
       impact: 4,
       isCompleted: false,
     })
   }
 
+  // Google Posts
   if (data.googlePostsCount < 4) {
     tasks.push({
-      id: 'publish-post',
-      title: 'Publier un post Google',
-      description: 'Partagez une actualité, promotion ou événement sur votre fiche Google',
+      id: `post-${Date.now()}`,
+      title: 'Publier une actualité sur Google',
+      description: 'Partagez une promotion, un événement ou une nouveauté. Les posts augmentent votre visibilité dans les résultats locaux.',
       category: 'POSTS',
       impact: 3,
       isCompleted: false,
     })
   }
 
+  // Website
   if (!data.hasWebsite) {
     tasks.push({
-      id: 'create-website',
-      title: 'Créer ou relier votre site web',
-      description: 'Un site web augmente significativement votre score de visibilité locale',
+      id: `website-${Date.now()}`,
+      title: 'Associer votre site web à votre fiche',
+      description: 'Les établissements avec un site web ont un score de visibilité supérieur de 10 points en moyenne.',
       category: 'WEBSITE',
       impact: 10,
       isCompleted: false,
     })
   }
 
-  if (data.googleReviewCount < 50) {
+  // Gather more reviews
+  if (data.googleReviewCount < 100) {
+    const target = data.googleReviewCount < 20 ? 20 : data.googleReviewCount < 50 ? 50 : 100
     tasks.push({
-      id: 'get-reviews',
-      title: 'Demander des avis à vos clients',
-      description: 'Envoyez un lien Google Avis à vos 10 derniers clients satisfaits',
+      id: `reviews-${Date.now()}`,
+      title: `Obtenir de nouveaux avis (objectif : ${target})`,
+      description: `Envoyez un lien Google Avis à vos clients récents. Vous avez ${data.googleReviewCount} avis — votre concurrent en a probablement davantage.`,
       category: 'REVIEWS',
       impact: 8,
       isCompleted: false,
     })
   }
 
+  // Info verification
   tasks.push({
-    id: 'update-info',
-    title: 'Vérifier vos informations',
-    description: 'Confirmez que vos horaires et coordonnées sont à jour',
+    id: `info-${Date.now()}`,
+    title: 'Vérifier vos horaires et coordonnées',
+    description: 'Des informations incorrectes peuvent faire fuir des clients. Vérifiez horaires, adresse et numéro de téléphone.',
     category: 'INFO',
     impact: 2,
     isCompleted: false,
@@ -152,12 +154,12 @@ export function generateAlerts(data: {
   const alerts: AlertItem[] = []
   const now = new Date().toISOString()
 
-  if (data.competitorScoreDelta && data.competitorScoreDelta > 5) {
+  if (data.competitorScoreDelta && data.competitorScoreDelta > 3) {
     alerts.push({
-      id: 'comp-gain',
+      id: `comp-${Date.now()}`,
       type: 'COMPETITOR_GAIN',
       title: 'Votre concurrent progresse',
-      message: `Votre concurrent principal a gagné ${data.competitorScoreDelta} points cette semaine. Agissez maintenant.`,
+      message: `Votre concurrent principal a gagné ${data.competitorScoreDelta} points. Consultez vos missions pour reprendre l'avantage.`,
       priority: 'HIGH',
       isRead: false,
       createdAt: now,
@@ -166,11 +168,23 @@ export function generateAlerts(data: {
 
   if (data.scoreDelta < -3) {
     alerts.push({
-      id: 'score-drop',
+      id: `drop-${Date.now()}`,
       type: 'RATING_DROP',
-      title: 'Votre score a baissé',
-      message: `Votre score a diminué de ${Math.abs(data.scoreDelta)} points. Consultez vos missions pour corriger cela.`,
+      title: 'Score en baisse de ' + Math.abs(data.scoreDelta) + ' pts',
+      message: `Votre score a diminué. Cela peut indiquer un manque d'activité récente sur votre fiche ou de nouveaux avis négatifs.`,
       priority: 'URGENT',
+      isRead: false,
+      createdAt: now,
+    })
+  }
+
+  if (data.previousRating && data.rating < data.previousRating && data.rating < 4.0) {
+    alerts.push({
+      id: `rating-${Date.now()}`,
+      type: 'RATING_DROP',
+      title: 'Note Google en baisse',
+      message: `Votre note est passée à ${data.rating}/5. Répondez aux avis récents pour montrer votre engagement.`,
+      priority: 'HIGH',
       isRead: false,
       createdAt: now,
     })
@@ -178,25 +192,38 @@ export function generateAlerts(data: {
 
   if (data.scoreDelta > 0) {
     alerts.push({
-      id: 'progress',
+      id: `progress-${Date.now()}`,
       type: 'PROGRESS',
-      title: 'Vous progressez !',
-      message: `Votre score a augmenté de ${data.scoreDelta} point${data.scoreDelta > 1 ? 's' : ''} cette semaine. Continuez comme ça !`,
+      title: `+${data.scoreDelta} point${data.scoreDelta > 1 ? 's' : ''} cette semaine`,
+      message: `Vos actions portent leurs fruits. Continuez sur cette lancée pour dépasser vos concurrents.`,
       priority: 'LOW',
       isRead: false,
       createdAt: now,
     })
   }
 
-  alerts.push({
-    id: 'quick-win',
-    type: 'QUICK_WIN',
-    title: 'Gain rapide disponible',
-    message: 'Ajouter 3 photos cette semaine peut vous faire gagner jusqu\'à 4 points.',
-    priority: 'MEDIUM',
-    isRead: false,
-    createdAt: now,
-  })
+  // Quick win based on actual data
+  if (data.reviewCount < 20) {
+    alerts.push({
+      id: `quickwin-${Date.now()}`,
+      type: 'QUICK_WIN',
+      title: 'Gain rapide : demandez des avis',
+      message: `Avec seulement ${data.reviewCount} avis, obtenir 5 nouveaux avis cette semaine peut vous faire gagner jusqu'à 6 points.`,
+      priority: 'MEDIUM',
+      isRead: false,
+      createdAt: now,
+    })
+  } else {
+    alerts.push({
+      id: `quickwin-${Date.now()}`,
+      type: 'QUICK_WIN',
+      title: 'Gain rapide disponible',
+      message: 'Ajouter 3 photos professionnelles cette semaine peut améliorer votre score de 2 à 4 points.',
+      priority: 'MEDIUM',
+      isRead: false,
+      createdAt: now,
+    })
+  }
 
   return alerts
 }
@@ -234,15 +261,17 @@ export function getLevel(xp: number): { level: number; name: string; progress: n
   }
 }
 
+// Fallback simulation when Google Places API is not configured
 export function simulateBusinessData(data: OnboardingData) {
-  const seed = data.businessName.length + data.city.length
+  const seed = (data.businessName.charCodeAt(0) + data.city.charCodeAt(0)) * 3 +
+    data.businessName.length + data.city.length
 
-  const reviewCount = 15 + (seed % 150)
-  const rating = 3.8 + ((seed % 12) / 10)
-  const photosCount = 5 + (seed % 45)
-  const postsCount = seed % 8
-  const responseRate = 0.3 + ((seed % 70) / 100)
-  const businessAgeMonths = 12 + (seed % 60)
+  const reviewCount = 12 + (seed % 80)
+  const rating = 3.9 + ((seed % 11) / 10)
+  const photosCount = 6 + (seed % 30)
+  const postsCount = seed % 6
+  const responseRate = 0.25 + ((seed % 65) / 100)
+  const businessAgeMonths = 18 + (seed % 48)
 
   return {
     googleRating: Math.round(Math.min(5, rating) * 10) / 10,
@@ -261,13 +290,13 @@ export function simulateBusinessData(data: OnboardingData) {
 export function simulateCompetitorData(competitorName?: string, businessScore?: number) {
   if (!competitorName) return null
 
-  const seed = competitorName.length * 7
+  const seed = competitorName.split('').reduce((a, c) => a + c.charCodeAt(0), 0) % 100
 
-  const competitorReviews = 30 + (seed % 200)
-  const competitorRating = 4.0 + ((seed % 10) / 10)
-  const competitorPhotos = 20 + (seed % 80)
-  const competitorPosts = 2 + (seed % 10)
-  const competitorResponseRate = 0.5 + ((seed % 50) / 100)
+  const competitorReviews = 30 + (seed % 120)
+  const competitorRating = 4.0 + ((seed % 9) / 10)
+  const competitorPhotos = 15 + (seed % 50)
+  const competitorPosts = 2 + (seed % 8)
+  const competitorResponseRate = 0.5 + ((seed % 40) / 100)
 
   const { score } = calculateLocalScore({
     googleRating: Math.min(5, competitorRating),
