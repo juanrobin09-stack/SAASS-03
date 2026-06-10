@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     const data = schema.parse(await req.json())
 
     // — Fetch real data from Google Places API (fallback to simulation) —
-    let businessData: ReturnType<typeof simulateBusinessData>
+    let businessData: Parameters<typeof calculateLocalScore>[0] | undefined
     let realPlace = null
     let dataSource: 'google' | 'simulated' = 'simulated'
 
@@ -73,7 +73,7 @@ export async function POST(req: Request) {
       }
     }
 
-    if (!businessData!) {
+    if (!businessData) {
       businessData = simulateBusinessData(data)
     }
 

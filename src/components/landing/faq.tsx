@@ -16,7 +16,7 @@ const faqs = [
   },
   {
     q: 'À quelle fréquence mon score est-il mis à jour ?',
-    a: 'En plan Pro et Business, votre score est mis à jour automatiquement chaque semaine. Vous recevez une notification avec l\'évolution et les nouvelles missions. En plan Gratuit, une seule analyse est disponible.',
+    a: 'En plan Pro, votre score est mis à jour automatiquement chaque semaine. Vous recevez une notification avec l\'évolution et les nouvelles missions. En plan Gratuit, une seule analyse est disponible.',
   },
   {
     q: 'Mes données sont-elles sécurisées ?',
@@ -27,12 +27,8 @@ const faqs = [
     a: 'Oui, sans engagement ni frais de résiliation. L\'annulation se fait en un clic depuis votre tableau de bord. Vous continuez à avoir accès jusqu\'à la fin de la période payée.',
   },
   {
-    q: 'Le plan Business permet-il plusieurs établissements ?',
-    a: 'Oui, le plan Business permet de gérer jusqu\'à 5 établissements avec des tableaux de bord individuels, des comparaisons entre établissements et des rapports automatiques pour chacun.',
-  },
-  {
     q: 'Y a-t-il une période d\'essai ?',
-    a: 'Le plan Gratuit est disponible indéfiniment et inclut une analyse complète. Si vous passez au Pro ou Business et n\'êtes pas satisfait dans les 30 premiers jours, nous vous remboursons intégralement.',
+    a: 'Le plan Gratuit est disponible indéfiniment et inclut une analyse complète. Si vous passez au Pro et n\'êtes pas satisfait dans les 30 premiers jours, nous vous remboursons intégralement.',
   },
 ]
 

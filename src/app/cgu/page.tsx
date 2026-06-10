@@ -48,10 +48,6 @@ export default function CguPage() {
                 <p className="text-white font-medium mb-1">Plan Pro — 19€/mois</p>
                 <p>Suivi hebdomadaire d'1 établissement, historique complet, coach IA, missions, alertes, gamification et export PDF.</p>
               </div>
-              <div className="p-4 bg-dark-900/50 border border-dark-800 rounded-xl">
-                <p className="text-white font-medium mb-1">Plan Business — 39€/mois</p>
-                <p>Jusqu'à 5 établissements suivis simultanément avec toutes les fonctionnalités Pro.</p>
-              </div>
             </div>
           </section>
 
