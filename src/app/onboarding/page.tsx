@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MapPin, Building2, Tag, Globe, Phone, Target, ArrowRight, Sparkles } from 'lucide-react'
+import { MapPin, Building2, Tag, Globe, Phone, Target, ArrowRight, Sparkles, Search, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScanAnimation } from '@/components/onboarding/scan-animation'
@@ -26,6 +26,12 @@ interface FormData {
   competitorName: string
 }
 
+interface Suggestion {
+  placeId: string
+  mainText: string
+  secondaryText: string
+}
+
 export default function OnboardingPage() {
   const router = useRouter()
   const [step, setStep] = useState(1)
@@ -36,6 +42,79 @@ export default function OnboardingPage() {
   })
   const [errors, setErrors] = useState<Partial<FormData>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Autocomplete state
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([])
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false)
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [placeSelected, setPlaceSelected] = useState(false)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const wrapperRef = useRef<HTMLDivElement>(null)
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const handleBusinessNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setFormData(prev => ({ ...prev, businessName: value }))
+    setErrors(prev => ({ ...prev, businessName: '' }))
+    setPlaceSelected(false)
+
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+
+    if (value.length < 2) {
+      setSuggestions([])
+      setShowSuggestions(false)
+      return
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      setLoadingSuggestions(true)
+      try {
+        const query = formData.city ? `${value} ${formData.city}` : value
+        const res = await fetch(`/api/places/autocomplete?q=${encodeURIComponent(query)}`)
+        const data = await res.json()
+        setSuggestions(data.suggestions ?? [])
+        setShowSuggestions((data.suggestions ?? []).length > 0)
+      } catch {
+        setSuggestions([])
+      } finally {
+        setLoadingSuggestions(false)
+      }
+    }, 350)
+  }
+
+  const handleSelectPlace = async (suggestion: Suggestion) => {
+    setShowSuggestions(false)
+    setFormData(prev => ({ ...prev, businessName: suggestion.mainText }))
+    setPlaceSelected(true)
+
+    try {
+      const res = await fetch(`/api/places/details?placeId=${suggestion.placeId}`)
+      const details = await res.json()
+      if (!details.error) {
+        setFormData(prev => ({
+          ...prev,
+          businessName: details.name || prev.businessName,
+          address: details.address || prev.address,
+          city: details.city || prev.city,
+          phone: details.phone || prev.phone,
+          website: details.website || prev.website,
+          category: details.category || prev.category,
+        }))
+      }
+    } catch {
+      // keep manually typed values
+    }
+  }
 
   const update = (field: keyof FormData) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(prev => ({ ...prev, [field]: e.target.value }))
@@ -94,13 +173,11 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen bg-dark-950 flex items-center justify-center px-4 py-16">
-      {/* Background */}
       <div className="absolute inset-0">
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary-600/8 rounded-full blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-lg">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -123,7 +200,6 @@ export default function OnboardingPage() {
           </p>
         </motion.div>
 
-        {/* Progress */}
         <div className="flex gap-2 mb-8">
           {[1, 2].map(s => (
             <div
@@ -144,17 +220,66 @@ export default function OnboardingPage() {
               exit={{ opacity: 0, x: -20 }}
               className="space-y-5"
             >
-              <Input
-                label="Nom de votre établissement *"
-                type="text"
-                id="businessName"
-                placeholder="ex: Restaurant Le Marché"
-                value={formData.businessName}
-                onChange={update('businessName')}
-                icon={<Building2 className="w-4 h-4" />}
-                error={errors.businessName}
-                required
-              />
+              {/* Business name with autocomplete */}
+              <div ref={wrapperRef} className="relative">
+                <label className="block text-sm font-medium text-dark-300 mb-1.5">
+                  Nom de votre établissement *
+                </label>
+                <div className="relative">
+                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400 pointer-events-none" />
+                  <input
+                    type="text"
+                    placeholder="ex: La Tourette, Restaurant Le Marché…"
+                    value={formData.businessName}
+                    onChange={handleBusinessNameChange}
+                    onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                    className={`w-full rounded-lg border ${errors.businessName ? 'border-red-500' : placeSelected ? 'border-accent-500/50' : 'border-dark-700'} bg-dark-900 text-white pl-10 pr-10 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all`}
+                    autoComplete="off"
+                  />
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    {loadingSuggestions
+                      ? <Loader2 className="w-4 h-4 text-dark-400 animate-spin" />
+                      : <Search className="w-4 h-4 text-dark-600" />
+                    }
+                  </div>
+                </div>
+                {errors.businessName && (
+                  <p className="mt-1.5 text-sm text-red-400">{errors.businessName}</p>
+                )}
+                {placeSelected && (
+                  <p className="mt-1.5 text-xs text-accent-400 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" /> Établissement trouvé — infos pré-remplies
+                  </p>
+                )}
+
+                {/* Suggestions dropdown */}
+                <AnimatePresence>
+                  {showSuggestions && suggestions.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute z-50 w-full mt-1 bg-dark-900 border border-dark-700 rounded-xl shadow-xl overflow-hidden"
+                    >
+                      {suggestions.map((s) => (
+                        <button
+                          key={s.placeId}
+                          type="button"
+                          onMouseDown={() => handleSelectPlace(s)}
+                          className="w-full text-left px-4 py-3 hover:bg-dark-800 transition-colors border-b border-dark-800 last:border-0 flex items-start gap-3"
+                        >
+                          <MapPin className="w-4 h-4 text-primary-400 mt-0.5 flex-shrink-0" />
+                          <div>
+                            <p className="text-white text-sm font-medium">{s.mainText}</p>
+                            <p className="text-dark-400 text-xs mt-0.5">{s.secondaryText}</p>
+                          </div>
+                        </button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
               <Input
                 label="Ville *"
@@ -188,7 +313,7 @@ export default function OnboardingPage() {
                     id="category"
                     value={formData.category}
                     onChange={update('category')}
-                    className="w-full rounded-lg border border-dark-700 bg-dark-900 text-white pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all appearance-none"
+                    className={`w-full rounded-lg border ${errors.category ? 'border-red-500' : 'border-dark-700'} bg-dark-900 text-white pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all appearance-none`}
                   >
                     <option value="">Sélectionnez une catégorie</option>
                     {CATEGORIES.map(c => (
