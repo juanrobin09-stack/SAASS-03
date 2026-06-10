@@ -51,7 +51,7 @@ export default function LoginPage() {
           <span className="font-bold text-white text-lg">LocalScore.ai</span>
         </div>
         <SignIn
-          afterSignInUrl="/dashboard"
+          fallbackRedirectUrl="/dashboard"
           signUpUrl="/register"
         />
       </div>

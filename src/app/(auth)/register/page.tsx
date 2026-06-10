@@ -56,7 +56,7 @@ export default function RegisterPage() {
           <span className="font-bold text-white text-lg">LocalScore.ai</span>
         </div>
         <SignUp
-          afterSignUpUrl="/onboarding"
+          fallbackRedirectUrl="/onboarding"
           signInUrl="/login"
         />
       </div>
