@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -51,11 +51,23 @@
 
 @layer utilities {
   .text-gradient {
-    @apply bg-gradient-to-r from-primary-400 via-accent-400 to-primary-400 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary-400 via-violet-400 to-accent-400 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-primary {
+    @apply bg-gradient-to-r from-primary-400 to-accent-400 bg-clip-text text-transparent;
   }
 
   .glass {
     @apply bg-dark-900/50 backdrop-blur-xl border border-dark-800;
+  }
+
+  .glass-light {
+    @apply bg-dark-900/30 backdrop-blur-xl border border-dark-700/50;
+  }
+
+  .heading {
+    @apply font-black tracking-tight leading-tight;
   }
 
   .gradient-border {
@@ -72,6 +84,15 @@
     border-radius: inherit;
     background: linear-gradient(135deg, #6366f1, #10b981);
   }
+}
+
+@media print {
+  .print\:hidden { display: none !important; }
+  body { background: white !important; color: black !important; }
+  .bg-dark-950, .bg-dark-900 { background: white !important; }
+  .text-white { color: black !important; }
+  .text-dark-300, .text-dark-400 { color: #374151 !important; }
+  .border-dark-700, .border-dark-800 { border-color: #e5e7eb !important; }
 }
 
 @layer components {

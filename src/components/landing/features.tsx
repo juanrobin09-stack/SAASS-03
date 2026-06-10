@@ -2,112 +2,128 @@
 
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
-import { TrendingUp, Target, Bell, Award, FileText, Brain, BarChart3, Zap } from 'lucide-react'
+import { TrendingUp, Target, Brain, BarChart3, Bell, Zap } from 'lucide-react'
 
 const features = [
   {
-    icon: <Target className="w-6 h-6" />,
+    icon: Target,
     title: 'Score Local IA',
-    description: 'Un score de 0 à 100 calculé par IA qui mesure votre visibilité locale réelle en temps réel.',
-    color: 'from-primary-500 to-primary-600',
-    glow: 'shadow-glow',
+    description: 'Un score de 0 à 100 calculé depuis vos données Google réelles : avis, photos, fiche, réactivité. Transparent et explicable.',
+    accent: 'from-primary-500/20 to-primary-600/5',
+    border: 'border-primary-500/15 hover:border-primary-500/30',
+    iconBg: 'bg-primary-600',
+    stat: '0–100',
+    statLabel: 'score précis',
   },
   {
-    icon: <TrendingUp className="w-6 h-6" />,
-    title: 'Suivi Hebdomadaire',
-    description: 'Suivez votre progression semaine après semaine. Chaque action améliore votre score.',
-    color: 'from-accent-500 to-accent-600',
-    glow: 'shadow-glow-accent',
-  },
-  {
-    icon: <Brain className="w-6 h-6" />,
-    title: 'Coach IA Personnalisé',
-    description: 'Votre coach IA analyse votre situation et vous dit exactement quelle action prioriser.',
-    color: 'from-purple-500 to-purple-600',
-    glow: '',
-  },
-  {
-    icon: <BarChart3 className="w-6 h-6" />,
+    icon: BarChart3,
     title: 'Analyse Concurrentielle',
-    description: "Comparez-vous à vos concurrents locaux. Voyez leur score et comblez l'écart.",
-    color: 'from-orange-500 to-orange-600',
-    glow: '',
+    description: "Identifiez automatiquement vos vrais concurrents locaux, mesurez leur score, et voyez exactement l'écart à combler.",
+    accent: 'from-orange-500/15 to-orange-600/5',
+    border: 'border-orange-500/15 hover:border-orange-500/30',
+    iconBg: 'bg-orange-500',
+    stat: '5 km',
+    statLabel: 'rayon analysé',
   },
   {
-    icon: <Bell className="w-6 h-6" />,
-    title: 'Alertes Intelligentes',
-    description: 'Soyez alerté quand votre concurrent progresse ou quand un gain rapide est disponible.',
-    color: 'from-pink-500 to-pink-600',
-    glow: '',
+    icon: Brain,
+    title: 'Coach IA Personnalisé',
+    description: "Votre coach analyse vos faiblesses et vous dit exactement quelle action prioriser cette semaine. Zéro générique.",
+    accent: 'from-violet-500/15 to-violet-600/5',
+    border: 'border-violet-500/15 hover:border-violet-500/30',
+    iconBg: 'bg-violet-600',
+    stat: 'IA',
+    statLabel: 'analyse sur mesure',
   },
   {
-    icon: <Award className="w-6 h-6" />,
-    title: 'Gamification',
-    description: 'Niveaux, badges, défis hebdomadaires. Votre produit SaaS le plus addictif.',
-    color: 'from-yellow-500 to-yellow-600',
-    glow: '',
-  },
-  {
-    icon: <FileText className="w-6 h-6" />,
-    title: 'Rapport PDF Premium',
-    description: 'Exportez un rapport magnifique partageable avec vos associés ou votre agence.',
-    color: 'from-cyan-500 to-cyan-600',
-    glow: '',
-  },
-  {
-    icon: <Zap className="w-6 h-6" />,
+    icon: Zap,
     title: 'Missions de la Semaine',
-    description: "5 actions précises chaque semaine. Complétez-les et regardez votre score grimper.",
-    color: 'from-emerald-500 to-emerald-600',
-    glow: '',
+    description: '5 actions concrètes, priorisées par impact. Cochez-les et regardez votre score grimper en temps réel.',
+    accent: 'from-accent-500/15 to-accent-600/5',
+    border: 'border-accent-500/15 hover:border-accent-500/30',
+    iconBg: 'bg-accent-600',
+    stat: '+5',
+    statLabel: 'pts / semaine moy.',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Suivi Hebdomadaire',
+    description: "Suivez l'évolution de votre score semaine après semaine. L'historique complet disponible en un clic.",
+    accent: 'from-blue-500/15 to-blue-600/5',
+    border: 'border-blue-500/15 hover:border-blue-500/30',
+    iconBg: 'bg-blue-600',
+    stat: '52',
+    statLabel: "semaines d'historique",
+  },
+  {
+    icon: Bell,
+    title: 'Alertes Intelligentes',
+    description: 'Recevez une alerte quand votre concurrent progresse ou quand une opportunité rapide est identifiée.',
+    accent: 'from-pink-500/15 to-pink-600/5',
+    border: 'border-pink-500/15 hover:border-pink-500/30',
+    iconBg: 'bg-pink-600',
+    stat: 'Temps',
+    statLabel: 'réel',
   },
 ]
 
 export function Features() {
   const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const isInView = useInView(ref, { once: true, margin: '-80px' })
 
   return (
     <section id="fonctionnalites" className="py-32 relative overflow-hidden" ref={ref}>
       <div className="absolute inset-0 bg-dark-950" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary-600/5 rounded-full blur-3xl" />
+      <div className="absolute inset-0 bg-grid-pattern opacity-[0.02]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-primary-600/4 rounded-full blur-[100px] pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.6 }}
+          className="text-center mb-20"
         >
-          <div className="inline-flex items-center gap-2 bg-primary-500/10 border border-primary-500/20 rounded-full px-4 py-2 mb-6">
-            <span className="text-sm text-primary-300 font-medium">Tout ce dont vous avez besoin</span>
-          </div>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-            Un arsenal complet pour
+          <p className="text-primary-400 text-sm font-semibold tracking-widest uppercase mb-4">
+            Tout ce dont vous avez besoin
+          </p>
+          <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight leading-tight mb-5">
+            Un système complet pour
             <br />
             <span className="text-primary-400">dominer localement</span>
           </h2>
-          <p className="text-xl text-dark-400 max-w-2xl mx-auto">
-            Pas un simple audit. Un logiciel qui crée une amélioration continue et vous rend dépendant de vos propres progrès.
+          <p className="text-dark-400 text-lg max-w-xl mx-auto leading-relaxed">
+            Pas un simple audit. Un moteur d'amélioration continue qui transforme vos données Google en actions concrètes.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {features.map((feature, i) => (
-            <motion.div
-              key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: i * 0.05 }}
-              className="group bg-dark-900/50 border border-dark-800 hover:border-dark-700 rounded-2xl p-6 transition-all duration-300 hover:bg-dark-900/80"
-            >
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center text-white mb-4 group-hover:scale-110 transition-transform`}>
-                {feature.icon}
-              </div>
-              <h3 className="text-white font-semibold mb-2">{feature.title}</h3>
-              <p className="text-dark-400 text-sm leading-relaxed">{feature.description}</p>
-            </motion.div>
-          ))}
+        {/* Features grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {features.map((feature, i) => {
+            const Icon = feature.icon
+            return (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 24 }}
+                animate={isInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.5, delay: i * 0.07 }}
+                className={`group relative bg-gradient-to-br ${feature.accent} border ${feature.border} rounded-2xl p-7 transition-all duration-300 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5`}
+              >
+                <div className="flex items-start justify-between mb-5">
+                  <div className={`w-11 h-11 rounded-xl ${feature.iconBg} flex items-center justify-center text-white shrink-0`}>
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <div className="text-right">
+                    <p className="text-white font-black text-xl leading-none">{feature.stat}</p>
+                    <p className="text-dark-500 text-[11px] mt-0.5">{feature.statLabel}</p>
+                  </div>
+                </div>
+                <h3 className="text-white font-bold text-lg mb-2.5 tracking-tight">{feature.title}</h3>
+                <p className="text-dark-400 text-sm leading-relaxed">{feature.description}</p>
+              </motion.div>
+            )
+          })}
         </div>
       </div>
     </section>
