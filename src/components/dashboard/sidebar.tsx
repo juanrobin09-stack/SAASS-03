@@ -46,7 +46,7 @@ export function Sidebar({ userName, userPlan }: SidebarProps) {
             animate={{ opacity: 1 }}
             className="font-bold text-white text-base truncate"
           >
-            Locentra
+            LocalScore.ai
           </motion.span>
         )}
       </div>

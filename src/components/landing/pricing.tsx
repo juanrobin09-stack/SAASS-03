@@ -156,7 +156,7 @@ export function Pricing() {
           <Mail className="w-4 h-4 text-primary-400 flex-shrink-0" />
           <span>
             Vous gérez plusieurs établissements ou une franchise ?{' '}
-            <a href="mailto:contact@locentra.space" className="text-primary-400 hover:underline font-medium">
+            <a href="mailto:juanrobin09@gmail.com" className="text-primary-400 hover:underline font-medium">
               Contactez-nous
             </a>{' '}
             pour une offre personnalisée.

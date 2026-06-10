@@ -19,13 +19,13 @@ export default function LandingPage() {
       <section className="py-20 border-y border-dark-800">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-dark-400 text-sm mb-12 uppercase tracking-widest font-medium">
-            Ce que Locentra vous permet de faire dès aujourd'hui
+            Ce que LocalScore.ai vous permet de faire dès aujourd'hui
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
                 title: 'Identifier pourquoi vous perdez des clients',
-                desc: 'Votre concurrent a 47 avis, vous en avez 12. Votre score Google Profile est incomplet. Locentra vous dit exactement où vous perdez des points.',
+                desc: 'Votre concurrent a 47 avis, vous en avez 12. Votre score Google Profile est incomplet. LocalScore.ai vous dit exactement où vous perdez des points.',
               },
               {
                 title: 'Agir sur les bons leviers chaque semaine',
