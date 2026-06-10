@@ -11,7 +11,7 @@ export default async function ParametresPage() {
   const userId = (session.user as any).id
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, name: true, email: true, plan: true, stripeCustomerId: true, stripeCurrentPeriodEnd: true },
+    select: { id: true, name: true, email: true, plan: true, password: true, stripeCustomerId: true, stripeCurrentPeriodEnd: true },
   })
 
   if (!user) redirect('/login')
@@ -23,6 +23,7 @@ export default async function ParametresPage() {
         email: user.email,
         plan: user.plan,
         hasStripe: !!user.stripeCustomerId,
+        hasPassword: !!user.password,
         periodEnd: user.stripeCurrentPeriodEnd?.toISOString(),
       }}
     />
