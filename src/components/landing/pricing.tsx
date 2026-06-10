@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
-import { Check, Zap, Building2, Lock } from 'lucide-react'
+import { Check, Zap, Lock, Mail } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 const plans = [
@@ -46,26 +46,6 @@ const plans = [
     highlighted: true,
     badge: 'Le plus populaire',
   },
-  {
-    name: 'Business',
-    price: 39,
-    description: 'Pour les multi-établissements',
-    icon: <Building2 className="w-5 h-5" />,
-    features: [
-      'Jusqu\'à 5 établissements simultanés',
-      'Tableau de bord consolidé',
-      'Rapports automatiques par établissement',
-      'Benchmarking entre vos adresses',
-      'Historique illimité',
-      'Export CSV + PDF avancés',
-      'Accès API (webhooks inclus)',
-      'Toutes les fonctionnalités Pro',
-      'Support prioritaire',
-    ],
-    cta: 'Démarrer Business',
-    href: '/register?plan=business',
-    highlighted: false,
-  },
 ]
 
 export function Pricing() {
@@ -94,7 +74,7 @@ export function Pricing() {
           <p className="text-xl text-dark-400">Sans engagement. Annulable à tout moment.</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start max-w-3xl mx-auto w-full">
           {plans.map((plan, i) => (
             <motion.div
               key={plan.name}
@@ -166,6 +146,22 @@ export function Pricing() {
         >
           Paiement sécurisé par Stripe · Sans engagement · Remboursement 30 jours
         </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ delay: 0.5 }}
+          className="mt-12 flex items-center justify-center gap-3 text-sm text-dark-400 border border-dark-800 rounded-2xl p-5 max-w-lg mx-auto"
+        >
+          <Mail className="w-4 h-4 text-primary-400 flex-shrink-0" />
+          <span>
+            Vous gérez plusieurs établissements ou une franchise ?{' '}
+            <a href="mailto:contact@locentra.space" className="text-primary-400 hover:underline font-medium">
+              Contactez-nous
+            </a>{' '}
+            pour une offre personnalisée.
+          </span>
+        </motion.div>
       </div>
     </section>
   )

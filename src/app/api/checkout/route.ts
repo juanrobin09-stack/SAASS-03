@@ -6,7 +6,7 @@ import { z } from 'zod'
 import { getOrCreateUser } from '@/lib/user'
 import { createCheckoutSession } from '@/lib/stripe'
 
-const schema = z.object({ plan: z.enum(['PRO', 'BUSINESS']) })
+const schema = z.object({ plan: z.enum(['PRO']) })
 
 export async function POST(req: Request) {
   try {
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     const user = await getOrCreateUser(clerkId, email)
 
     const { plan } = schema.parse(await req.json())
-    const priceId = plan === 'PRO' ? process.env.STRIPE_PRO_PRICE_ID : process.env.STRIPE_BUSINESS_PRICE_ID
+    const priceId = process.env.STRIPE_PRO_PRICE_ID
 
     if (!priceId) return NextResponse.json({ error: 'Plan non configuré' }, { status: 500 })
 
