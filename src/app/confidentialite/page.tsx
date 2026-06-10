@@ -2,7 +2,7 @@ import { Navbar } from '@/components/landing/navbar'
 import { Footer } from '@/components/landing/footer'
 
 export const metadata = {
-  title: 'Politique de confidentialité — Locentra',
+  title: 'Politique de confidentialité — LocalScore.ai',
 }
 
 export default function ConfidentialitePage() {
@@ -11,13 +11,13 @@ export default function ConfidentialitePage() {
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 py-32">
         <h1 className="text-3xl font-bold text-white mb-2">Politique de confidentialité</h1>
-        <p className="text-dark-500 text-sm mb-12">Dernière mise à jour : juin 2025 — Conforme RGPD</p>
+        <p className="text-dark-500 text-sm mb-12">Dernière mise à jour : juin 2026 — Conforme RGPD</p>
 
         <div className="space-y-10 text-dark-300 text-sm leading-relaxed">
           <section>
             <h2 className="text-white font-semibold text-lg mb-3">1. Responsable du traitement</h2>
             <p>
-              Le responsable du traitement des données personnelles est <strong className="text-white">Locentra</strong>, accessible à l'adresse <strong className="text-white">contact@locentra.space</strong>.
+              Le responsable du traitement des données personnelles est <strong className="text-white">LocalScore.ai</strong>, accessible à l'adresse <strong className="text-white">juanrobin09@gmail.com</strong>.
             </p>
           </section>
 
@@ -105,7 +105,7 @@ export default function ConfidentialitePage() {
             </ul>
             <p className="mt-3">
               Pour exercer ces droits, contactez-nous à{' '}
-              <a href="mailto:contact@locentra.space" className="text-primary-400 hover:underline">contact@locentra.space</a>.
+              <a href="mailto:juanrobin09@gmail.com" className="text-primary-400 hover:underline">juanrobin09@gmail.com</a>.
               Nous répondrons dans un délai de 30 jours.
             </p>
             <p className="mt-3">
@@ -116,7 +116,7 @@ export default function ConfidentialitePage() {
           <section>
             <h2 className="text-white font-semibold text-lg mb-3">7. Cookies</h2>
             <p>
-              Locentra utilise des cookies techniques strictement nécessaires au fonctionnement du service (sessions d'authentification). Aucun cookie publicitaire ou de tracking tiers n'est utilisé.
+              LocalScore.ai utilise des cookies techniques strictement nécessaires au fonctionnement du service (sessions d'authentification). Aucun cookie publicitaire ou de tracking tiers n'est utilisé.
             </p>
           </section>
 
@@ -137,7 +137,7 @@ export default function ConfidentialitePage() {
           <section>
             <h2 className="text-white font-semibold text-lg mb-3">10. Contact</h2>
             <p>
-              <a href="mailto:contact@locentra.space" className="text-primary-400 hover:underline">contact@locentra.space</a>
+              <a href="mailto:juanrobin09@gmail.com" className="text-primary-400 hover:underline">juanrobin09@gmail.com</a>
             </p>
           </section>
         </div>

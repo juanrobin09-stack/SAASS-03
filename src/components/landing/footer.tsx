@@ -11,7 +11,7 @@ export function Footer() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
                 <MapPin className="w-4 h-4 text-white" />
               </div>
-              <span className="font-bold text-white text-lg">Locentra</span>
+              <span className="font-bold text-white text-lg">LocalScore.ai</span>
             </Link>
             <p className="text-dark-400 text-sm max-w-xs leading-relaxed">
               Mesurez, améliorez et dominez votre visibilité locale.
@@ -35,14 +35,14 @@ export function Footer() {
               <li><Link href="/confidentialite" className="text-dark-400 hover:text-white text-sm transition-colors">Confidentialité</Link></li>
               <li><Link href="/cgu" className="text-dark-400 hover:text-white text-sm transition-colors">CGU</Link></li>
               <li><Link href="/mentions-legales" className="text-dark-400 hover:text-white text-sm transition-colors">Mentions légales</Link></li>
-              <li><a href="mailto:contact@locentra.space" className="text-dark-400 hover:text-white text-sm transition-colors">Contact</a></li>
+              <li><a href="mailto:juanrobin09@gmail.com" className="text-dark-400 hover:text-white text-sm transition-colors">Contact</a></li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-dark-800 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-dark-500 text-sm">
-            © 2025 Locentra — Tous droits réservés
+            © 2026 LocalScore.ai — Tous droits réservés
           </p>
           <p className="text-dark-500 text-sm">
             Fait pour les commerces locaux qui veulent progresser

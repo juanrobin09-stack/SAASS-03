@@ -16,7 +16,7 @@ export default function LoginPage() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-glow">
               <MapPin className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-white text-2xl">Locentra</span>
+            <span className="font-bold text-white text-2xl">LocalScore.ai</span>
           </Link>
 
           <h2 className="text-4xl font-bold text-white mb-4 leading-tight">
@@ -48,7 +48,7 @@ export default function LoginPage() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
             <MapPin className="w-4 h-4 text-white" />
           </div>
-          <span className="font-bold text-white text-lg">Locentra</span>
+          <span className="font-bold text-white text-lg">LocalScore.ai</span>
         </div>
         <SignIn />
       </div>

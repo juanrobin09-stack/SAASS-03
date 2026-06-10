@@ -50,7 +50,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-xl text-dark-400 max-w-2xl mx-auto mb-10"
         >
-          Locentra analyse votre visibilité locale, la compare à vos concurrents et vous donne
+          LocalScore.ai analyse votre visibilité locale, la compare à vos concurrents et vous donne
           exactement quoi faire chaque semaine pour les dépasser.
         </motion.p>
 
