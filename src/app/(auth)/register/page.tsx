@@ -3,10 +3,11 @@ import Link from 'next/link'
 import { MapPin, Check } from 'lucide-react'
 
 const benefits = [
-  'Score Local calculé en 60 secondes',
-  'Analyse concurrentielle automatique',
-  '5 missions personnalisées cette semaine',
-  'Coach IA inclus dans le plan gratuit',
+  'Score Local IA calculé en 60 secondes',
+  'Comparaison avec vos concurrents directs',
+  '5 missions concrètes dès la première analyse',
+  'Coach IA inclus — plan gratuit',
+  'Sans carte bancaire requise',
 ]
 
 export default function RegisterPage() {
@@ -23,7 +24,7 @@ export default function RegisterPage() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-glow">
               <MapPin className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-white text-2xl">LocalScore<span className="text-primary-400">.ai</span></span>
+            <span className="font-bold text-white text-2xl">Locentra</span>
           </Link>
 
           <h2 className="text-4xl font-bold text-white mb-4">
@@ -52,7 +53,7 @@ export default function RegisterPage() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
             <MapPin className="w-4 h-4 text-white" />
           </div>
-          <span className="font-bold text-white text-lg">LocalScore<span className="text-primary-400">.ai</span></span>
+          <span className="font-bold text-white text-lg">Locentra</span>
         </div>
         <SignUp />
       </div>

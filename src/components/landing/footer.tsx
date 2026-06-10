@@ -11,42 +11,41 @@ export function Footer() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
                 <MapPin className="w-4 h-4 text-white" />
               </div>
-              <span className="font-bold text-white text-lg">LocalScore<span className="text-primary-400">.ai</span></span>
+              <span className="font-bold text-white text-lg">Locentra</span>
             </Link>
             <p className="text-dark-400 text-sm max-w-xs leading-relaxed">
-              Le micro-SaaS premium pour mesurer, améliorer et dominer votre visibilité locale.
+              Mesurez, améliorez et dominez votre visibilité locale.
+              Un Score IA, des missions concrètes, une progression visible.
             </p>
           </div>
 
           <div>
             <h4 className="text-white font-semibold mb-4">Produit</h4>
             <ul className="space-y-2">
-              {['Fonctionnalités', 'Tarifs', 'Comment ça marche', 'FAQ'].map(item => (
-                <li key={item}>
-                  <a href="#" className="text-dark-400 hover:text-white text-sm transition-colors">{item}</a>
-                </li>
-              ))}
+              <li><a href="/#fonctionnalites" className="text-dark-400 hover:text-white text-sm transition-colors">Fonctionnalités</a></li>
+              <li><a href="/#tarifs" className="text-dark-400 hover:text-white text-sm transition-colors">Tarifs</a></li>
+              <li><a href="/#comment-ca-marche" className="text-dark-400 hover:text-white text-sm transition-colors">Comment ça marche</a></li>
+              <li><a href="/#faq" className="text-dark-400 hover:text-white text-sm transition-colors">FAQ</a></li>
             </ul>
           </div>
 
           <div>
             <h4 className="text-white font-semibold mb-4">Légal</h4>
             <ul className="space-y-2">
-              {['Confidentialité', 'CGU', 'Mentions légales', 'Contact'].map(item => (
-                <li key={item}>
-                  <a href="#" className="text-dark-400 hover:text-white text-sm transition-colors">{item}</a>
-                </li>
-              ))}
+              <li><Link href="/confidentialite" className="text-dark-400 hover:text-white text-sm transition-colors">Confidentialité</Link></li>
+              <li><Link href="/cgu" className="text-dark-400 hover:text-white text-sm transition-colors">CGU</Link></li>
+              <li><Link href="/mentions-legales" className="text-dark-400 hover:text-white text-sm transition-colors">Mentions légales</Link></li>
+              <li><a href="mailto:contact@locentra.space" className="text-dark-400 hover:text-white text-sm transition-colors">Contact</a></li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-dark-800 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-dark-500 text-sm">
-            © 2025 LocalScore.ai — Tous droits réservés
+            © 2025 Locentra — Tous droits réservés
           </p>
           <p className="text-dark-500 text-sm">
-            Fait avec ❤️ pour les commerces locaux
+            Fait pour les commerces locaux qui veulent progresser
           </p>
         </div>
       </div>

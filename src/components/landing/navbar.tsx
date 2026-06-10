@@ -32,7 +32,7 @@ export function Navbar() {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center group-hover:shadow-glow transition-shadow">
               <MapPin className="w-4 h-4 text-white" />
             </div>
-            <span className="font-bold text-white text-lg">LocalScore<span className="text-primary-400">.ai</span></span>
+            <span className="font-bold text-white text-lg">Locentra</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-8">

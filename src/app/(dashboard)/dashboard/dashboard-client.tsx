@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { TrendingUp, MapPin, RefreshCw } from 'lucide-react'
 import { ScoreCard } from '@/components/dashboard/score-card'
@@ -36,7 +36,14 @@ export function DashboardClient({
   business, analysis, competitor, tasks, alerts, scoreHistory, badges
 }: DashboardClientProps) {
   const searchParams = useSearchParams()
+  const router = useRouter()
   const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    router.push('/onboarding')
+  }
 
   useEffect(() => {
     if (searchParams.get('upgrade') === 'success') {
@@ -85,9 +92,13 @@ export function DashboardClient({
               {analysis.scoreDelta > 0 ? '+' : ''}{analysis.scoreDelta} cette semaine
             </div>
           )}
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-dark-800 hover:bg-dark-700 border border-dark-700 rounded-lg text-dark-400 hover:text-white text-sm transition-all">
-            <RefreshCw className="w-4 h-4" />
-            Rafraîchir
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="flex items-center gap-2 px-3 py-1.5 bg-dark-800 hover:bg-dark-700 border border-dark-700 rounded-lg text-dark-400 hover:text-white text-sm transition-all disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+            Nouvelle analyse
           </button>
         </div>
       </div>

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, TrendingUp, Star, MapPin, Zap, ChevronUp } from 'lucide-react'
+import { ArrowRight, ChevronUp, Shield, Clock, Zap } from 'lucide-react'
 
 export function Hero() {
   return (
@@ -11,8 +11,8 @@ export function Hero() {
       {/* Background */}
       <div className="absolute inset-0 bg-dark-950">
         <div className="absolute inset-0 bg-grid-pattern opacity-30" />
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-600/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-accent-500/5 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary-600/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] bg-accent-500/5 rounded-full blur-3xl" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -24,7 +24,7 @@ export function Hero() {
           className="inline-flex items-center gap-2 bg-primary-500/10 border border-primary-500/20 rounded-full px-4 py-2 mb-8"
         >
           <Zap className="w-3.5 h-3.5 text-primary-400" />
-          <span className="text-sm text-primary-300 font-medium">Propulsé par l'IA • Résultats en 60 secondes</span>
+          <span className="text-sm text-primary-300 font-medium">Score IA • Analyse en 60 secondes • Sans carte bancaire</span>
         </motion.div>
 
         {/* Headline */}
@@ -50,7 +50,8 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-xl text-dark-400 max-w-2xl mx-auto mb-10"
         >
-          Découvrez votre Score Local IA, identifiez vos faiblesses et suivez votre progression chaque semaine pour dépasser vos concurrents.
+          Locentra analyse votre visibilité locale, la compare à vos concurrents et vous donne
+          exactement quoi faire chaque semaine pour les dépasser.
         </motion.p>
 
         {/* CTA */}
@@ -66,35 +67,26 @@ export function Hero() {
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </Link>
-          <a href="#comment-ca-marche">
-            <Button variant="ghost" size="xl">
-              Voir la démo
-            </Button>
-          </a>
         </motion.div>
 
-        {/* Social proof */}
+        {/* Trust signals — honest */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
           className="flex flex-wrap items-center justify-center gap-6 text-dark-400 text-sm mb-20"
         >
-          <div className="flex items-center gap-1.5">
-            <div className="flex -space-x-1">
-              {[1,2,3,4,5].map(i => (
-                <div key={i} className="w-7 h-7 rounded-full bg-gradient-to-br from-primary-400 to-accent-400 border-2 border-dark-950" />
-              ))}
-            </div>
-            <span>+1 200 commerces analysés</span>
+          <div className="flex items-center gap-2">
+            <Shield className="w-4 h-4 text-accent-400" />
+            <span>Sans carte bancaire</span>
           </div>
-          <div className="flex items-center gap-1">
-            {[1,2,3,4,5].map(i => <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />)}
-            <span className="ml-1">4.9/5 satisfaction</span>
+          <div className="flex items-center gap-2">
+            <Clock className="w-4 h-4 text-accent-400" />
+            <span>Premier score en 60 secondes</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <TrendingUp className="w-4 h-4 text-accent-400" />
-            <span>Score moyen +23 points en 4 semaines</span>
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4 text-accent-400" />
+            <span>Annulable à tout moment</span>
           </div>
         </motion.div>
 
@@ -121,12 +113,12 @@ function DashboardPreview() {
       {/* Top bar */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-dark-400 text-sm">Restaurant Le Marché</p>
-          <p className="text-white font-semibold">Tableau de bord • Semaine 12</p>
+          <p className="text-dark-400 text-sm">Boulangerie Artisanale — Lyon 6e</p>
+          <p className="text-white font-semibold">Tableau de bord • Semaine 24</p>
         </div>
         <div className="flex items-center gap-2 bg-accent-500/10 border border-accent-500/20 rounded-full px-3 py-1.5">
           <ChevronUp className="w-3.5 h-3.5 text-accent-400" />
-          <span className="text-accent-400 text-sm font-medium">+3 cette semaine</span>
+          <span className="text-accent-400 text-sm font-medium">+5 cette semaine</span>
         </div>
       </div>
 
@@ -134,12 +126,12 @@ function DashboardPreview() {
       <div className="grid grid-cols-3 gap-4">
         <div className="bg-dark-800/50 rounded-xl p-4 border border-dark-700">
           <p className="text-dark-400 text-xs mb-1">Votre Score</p>
-          <p className="text-5xl font-bold bg-gradient-to-r from-primary-400 to-accent-400 bg-clip-text text-transparent">74</p>
+          <p className="text-5xl font-bold bg-gradient-to-r from-primary-400 to-accent-400 bg-clip-text text-transparent">71</p>
           <p className="text-dark-400 text-xs mt-1">/100</p>
         </div>
         <div className="bg-dark-800/50 rounded-xl p-4 border border-dark-700">
-          <p className="text-dark-400 text-xs mb-1">Concurrent Principal</p>
-          <p className="text-4xl font-bold text-white">82</p>
+          <p className="text-dark-400 text-xs mb-1">Concurrent principal</p>
+          <p className="text-4xl font-bold text-white">79</p>
           <div className="flex items-center gap-1 mt-1">
             <div className="w-2 h-2 rounded-full bg-orange-400" />
             <p className="text-orange-400 text-xs">8 points d'écart</p>
@@ -147,7 +139,7 @@ function DashboardPreview() {
         </div>
         <div className="bg-dark-800/50 rounded-xl p-4 border border-dark-700">
           <p className="text-dark-400 text-xs mb-1">Objectif</p>
-          <p className="text-4xl font-bold text-white">82</p>
+          <p className="text-4xl font-bold text-white">80</p>
           <p className="text-accent-400 text-xs mt-1">Dépasser le concurrent</p>
         </div>
       </div>
@@ -156,10 +148,10 @@ function DashboardPreview() {
       <div>
         <div className="flex justify-between text-sm mb-2">
           <span className="text-dark-400">Progression vers l'objectif</span>
-          <span className="text-primary-400">74/82 points</span>
+          <span className="text-primary-400">71/80 points</span>
         </div>
         <div className="h-2 bg-dark-800 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-primary-600 to-accent-500 rounded-full" style={{ width: '90%' }} />
+          <div className="h-full bg-gradient-to-r from-primary-600 to-accent-500 rounded-full" style={{ width: '89%' }} />
         </div>
       </div>
 
@@ -168,14 +160,14 @@ function DashboardPreview() {
         <p className="text-white font-medium mb-3">Missions de la semaine</p>
         <div className="space-y-2">
           {[
-            { done: true, text: 'Répondre à 6 avis clients', points: '+3' },
-            { done: true, text: 'Ajouter 4 nouvelles photos', points: '+2' },
-            { done: false, text: 'Publier un post Google', points: '+2' },
-            { done: false, text: 'Ajouter un nouveau service', points: '+1' },
+            { done: true, text: 'Répondre à 5 avis clients récents', points: '+3' },
+            { done: true, text: 'Ajouter 3 photos de la boutique', points: '+2' },
+            { done: false, text: 'Publier un post Google My Business', points: '+2' },
+            { done: false, text: 'Mettre à jour les horaires de Noël', points: '+1' },
           ].map((task, i) => (
             <div key={i} className="flex items-center justify-between bg-dark-800/30 rounded-lg px-3 py-2">
               <div className="flex items-center gap-2.5">
-                <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${task.done ? 'bg-accent-500 border-accent-500' : 'border-dark-600'}`}>
+                <div className={`w-4 h-4 rounded-full border flex items-center justify-center flex-shrink-0 ${task.done ? 'bg-accent-500 border-accent-500' : 'border-dark-600'}`}>
                   {task.done && <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
                 </div>
                 <span className={`text-sm ${task.done ? 'text-dark-400 line-through' : 'text-dark-200'}`}>{task.text}</span>

@@ -1,6 +1,6 @@
 import { SignIn } from '@clerk/nextjs'
 import Link from 'next/link'
-import { MapPin, TrendingUp } from 'lucide-react'
+import { MapPin, CheckCircle } from 'lucide-react'
 
 export default function LoginPage() {
   return (
@@ -16,7 +16,7 @@ export default function LoginPage() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-glow">
               <MapPin className="w-5 h-5 text-white" />
             </div>
-            <span className="font-bold text-white text-2xl">LocalScore<span className="text-primary-400">.ai</span></span>
+            <span className="font-bold text-white text-2xl">Locentra</span>
           </Link>
 
           <h2 className="text-4xl font-bold text-white mb-4 leading-tight">
@@ -26,14 +26,16 @@ export default function LoginPage() {
             Connectez-vous pour voir votre progression et battre vos concurrents.
           </p>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-4">
             {[
-              { value: '+23', label: 'points en moyenne\npar mois' },
-              { value: '74%', label: 'des commerces\nprogressent dès semaine 1' },
-            ].map((stat) => (
-              <div key={stat.value} className="bg-dark-900/60 backdrop-blur rounded-xl p-4 border border-dark-700">
-                <p className="text-3xl font-bold text-primary-400 mb-1">{stat.value}</p>
-                <p className="text-dark-400 text-sm whitespace-pre-line">{stat.label}</p>
+              'Score IA recalculé chaque semaine',
+              'Missions prioritaires personnalisées',
+              'Comparaison avec vos concurrents',
+              'Coach IA qui vous dit quoi faire',
+            ].map((item) => (
+              <div key={item} className="flex items-center gap-3">
+                <CheckCircle className="w-5 h-5 text-accent-400 flex-shrink-0" />
+                <span className="text-dark-300 text-sm">{item}</span>
               </div>
             ))}
           </div>
@@ -46,7 +48,7 @@ export default function LoginPage() {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
             <MapPin className="w-4 h-4 text-white" />
           </div>
-          <span className="font-bold text-white text-lg">LocalScore<span className="text-primary-400">.ai</span></span>
+          <span className="font-bold text-white text-lg">Locentra</span>
         </div>
         <SignIn />
       </div>

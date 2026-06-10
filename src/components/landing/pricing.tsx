@@ -3,24 +3,24 @@
 import Link from 'next/link'
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
-import { Check, Zap } from 'lucide-react'
+import { Check, Zap, Building2, Lock } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 const plans = [
   {
     name: 'Gratuit',
     price: 0,
-    description: 'Découvrez votre score',
+    description: 'Découvrez ce que vous perdez',
+    icon: <Lock className="w-5 h-5" />,
     features: [
       '1 analyse complète',
-      'Score Local IA',
-      'Comparaison concurrentielle',
+      'Score Local IA (0–100)',
+      'Comparaison avec 1 concurrent',
+      'Détail du score en 6 dimensions',
+      '5 missions de la semaine',
       'Rapport PDF basique',
     ],
-    limitations: [
-      'Pas de suivi hebdomadaire',
-      'Pas d\'historique',
-    ],
+    limits: 'Pas de suivi dans le temps',
     cta: 'Commencer gratuitement',
     href: '/register',
     highlighted: false,
@@ -28,19 +28,20 @@ const plans = [
   {
     name: 'Pro',
     price: 19,
-    description: 'Pour progresser chaque semaine',
+    description: 'Pour progresser semaine après semaine',
+    icon: <Zap className="w-5 h-5" />,
     features: [
-      '1 établissement suivi',
-      'Score vivant mis à jour',
-      'Suivi hebdomadaire automatique',
-      'Historique complet',
-      'Export PDF premium',
-      'Coach IA personnalisé',
-      'Alertes intelligentes',
-      'Missions de la semaine',
-      'Gamification & badges',
+      '1 établissement suivi en continu',
+      'Mise à jour automatique chaque semaine',
+      'Historique complet de vos scores',
+      'Coach IA personnalisé à votre situation',
+      'Alertes : concurrent actif, gain rapide',
+      'Missions renouvelées chaque semaine',
+      'Gamification : niveaux, badges, XP',
+      'Export PDF premium partageable',
+      'Comparaison concurrentielle avancée',
     ],
-    cta: 'Démarrer l\'essai Pro',
+    cta: 'Démarrer le Pro',
     href: '/register?plan=pro',
     highlighted: true,
     badge: 'Le plus populaire',
@@ -48,15 +49,18 @@ const plans = [
   {
     name: 'Business',
     price: 39,
-    description: 'Multi-établissements',
+    description: 'Pour les multi-établissements',
+    icon: <Building2 className="w-5 h-5" />,
     features: [
-      'Jusqu\'à 5 établissements',
+      'Jusqu\'à 5 établissements simultanés',
+      'Tableau de bord consolidé',
+      'Rapports automatiques par établissement',
+      'Benchmarking entre vos adresses',
+      'Historique illimité',
+      'Export CSV + PDF avancés',
+      'Accès API (webhooks inclus)',
       'Toutes les fonctionnalités Pro',
-      'Comparaisons multiples',
-      'Exports avancés',
-      'Rapports automatiques',
       'Support prioritaire',
-      'Accès API',
     ],
     cta: 'Démarrer Business',
     href: '/register?plan=business',
@@ -110,6 +114,11 @@ export function Pricing() {
               )}
 
               <div className="mb-6">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-3 ${
+                  plan.highlighted ? 'bg-primary-500/20 text-primary-400' : 'bg-dark-800 text-dark-400'
+                }`}>
+                  {plan.icon}
+                </div>
                 <h3 className="text-white font-bold text-xl mb-1">{plan.name}</h3>
                 <p className="text-dark-400 text-sm mb-4">{plan.description}</p>
                 <div className="flex items-baseline gap-1">
@@ -138,14 +147,12 @@ export function Pricing() {
                     <span className="text-dark-300 text-sm">{feature}</span>
                   </li>
                 ))}
-                {plan.limitations?.map((limitation) => (
-                  <li key={limitation} className="flex items-start gap-3 opacity-40">
-                    <div className="w-5 h-5 rounded-full bg-dark-800 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-dark-400 text-xs">—</span>
-                    </div>
-                    <span className="text-dark-500 text-sm line-through">{limitation}</span>
+                {plan.limits && (
+                  <li className="flex items-start gap-3 pt-1 border-t border-dark-800 mt-2">
+                    <span className="text-dark-600 text-xs mt-1">—</span>
+                    <span className="text-dark-600 text-sm">{plan.limits}</span>
                   </li>
-                ))}
+                )}
               </ul>
             </motion.div>
           ))}
@@ -157,7 +164,7 @@ export function Pricing() {
           transition={{ delay: 0.4 }}
           className="text-center text-dark-500 text-sm mt-8"
         >
-          Paiement sécurisé par Stripe • Sans engagement • Remboursement 30 jours
+          Paiement sécurisé par Stripe · Sans engagement · Remboursement 30 jours
         </motion.p>
       </div>
     </section>
