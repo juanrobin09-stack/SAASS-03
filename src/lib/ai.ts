@@ -1,8 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk'
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-})
+function getClient() {
+  return new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY ?? 'sk-ant-placeholder-build' })
+}
 
 export async function generateCoachMessage(data: {
   businessName: string
@@ -44,7 +44,7 @@ Format JSON strict :
 }`
 
   try {
-    const response = await anthropic.messages.create({
+    const response = await getClient().messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 500,
       messages: [{ role: 'user', content: prompt }],
@@ -73,7 +73,7 @@ export async function generateWeeklyInsight(data: {
   totalTasks: number
 }): Promise<string> {
   try {
-    const response = await anthropic.messages.create({
+    const response = await getClient().messages.create({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 200,
       messages: [{

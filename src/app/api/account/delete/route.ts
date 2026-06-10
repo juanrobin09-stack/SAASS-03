@@ -2,7 +2,6 @@ export const dynamic = 'force-dynamic'
 
 import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
-import { clerkClient } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { stripe } from '@/lib/stripe'
 
@@ -18,10 +17,9 @@ export async function DELETE() {
       try { await stripe.subscriptions.cancel(user.stripeSubscriptionId) } catch {}
     }
 
-    // Delete from our DB (Clerk webhook will also fire but that's fine)
     await prisma.user.delete({ where: { clerkId } })
 
-    // Delete from Clerk
+    const { clerkClient } = await import('@clerk/nextjs/server')
     const client = await clerkClient()
     await client.users.deleteUser(clerkId)
 
