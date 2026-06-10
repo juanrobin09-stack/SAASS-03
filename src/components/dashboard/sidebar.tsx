@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { signOut } from 'next-auth/react'
+import { SignOutButton } from '@clerk/nextjs'
 import { motion } from 'framer-motion'
 import {
   LayoutDashboard, BarChart3, FileText, Settings, LogOut,
@@ -96,16 +96,15 @@ export function Sidebar({ userName, userPlan }: SidebarProps) {
           </div>
         )}
 
-        <button
-          onClick={() => signOut({ callbackUrl: '/' })}
-          className={cn(
+        <SignOutButton redirectUrl="/">
+          <button className={cn(
             'flex items-center gap-3 px-3 py-2 text-dark-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors w-full',
             collapsed && 'justify-center px-2'
-          )}
-        >
-          <LogOut className="w-4 h-4 flex-shrink-0" />
-          {!collapsed && <span className="text-sm">Déconnexion</span>}
-        </button>
+          )}>
+            <LogOut className="w-4 h-4 flex-shrink-0" />
+            {!collapsed && <span className="text-sm">Déconnexion</span>}
+          </button>
+        </SignOutButton>
       </div>
 
       {/* Collapse toggle */}

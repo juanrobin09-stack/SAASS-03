@@ -1,26 +1,19 @@
 import { NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
+import { auth } from '@clerk/nextjs/server'
+import { getUserByClerkId } from '@/lib/user'
 import { createPortalSession } from '@/lib/stripe'
 
 export async function POST() {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
-    }
+    const { userId: clerkId } = await auth()
+    if (!clerkId) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
 
-    const userId = (session.user as any).id
-    const user = await prisma.user.findUnique({ where: { id: userId } })
+    const user = await getUserByClerkId(clerkId)
+    if (!user?.stripeCustomerId) return NextResponse.json({ error: 'Aucun abonnement actif' }, { status: 400 })
 
-    if (!user?.stripeCustomerId) {
-      return NextResponse.json({ error: 'Aucun abonnement actif' }, { status: 400 })
-    }
-
-    const portalSession = await createPortalSession(user.stripeCustomerId)
-    return NextResponse.json({ url: portalSession.url })
-  } catch (error) {
+    const session = await createPortalSession(user.stripeCustomerId)
+    return NextResponse.json({ url: session.url })
+  } catch {
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
   }
 }

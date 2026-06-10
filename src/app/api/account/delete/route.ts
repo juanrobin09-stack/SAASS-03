@@ -1,32 +1,27 @@
 import { NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { auth } from '@clerk/nextjs/server'
+import { clerkClient } from '@clerk/nextjs/server'
 import { prisma } from '@/lib/prisma'
 import { stripe } from '@/lib/stripe'
 
 export async function DELETE() {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
-    }
+    const { userId: clerkId } = await auth()
+    if (!clerkId) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
 
-    const userId = (session.user as any).id
-
-    const user = await prisma.user.findUnique({ where: { id: userId } })
+    const user = await prisma.user.findUnique({ where: { clerkId } })
     if (!user) return NextResponse.json({ error: 'Introuvable' }, { status: 404 })
 
-    // Cancel Stripe subscription if active
     if (user.stripeSubscriptionId) {
-      try {
-        await stripe.subscriptions.cancel(user.stripeSubscriptionId)
-      } catch {
-        // Continue even if Stripe cancel fails
-      }
+      try { await stripe.subscriptions.cancel(user.stripeSubscriptionId) } catch {}
     }
 
-    // Cascade delete (Prisma handles relations with onDelete: Cascade)
-    await prisma.user.delete({ where: { id: userId } })
+    // Delete from our DB (Clerk webhook will also fire but that's fine)
+    await prisma.user.delete({ where: { clerkId } })
+
+    // Delete from Clerk
+    const client = await clerkClient()
+    await client.users.deleteUser(clerkId)
 
     return NextResponse.json({ success: true })
   } catch {

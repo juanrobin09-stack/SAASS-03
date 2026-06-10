@@ -1,30 +1,24 @@
-import { getServerSession } from 'next-auth'
+import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getUserByClerkId } from '@/lib/user'
 import { Alerts } from '@/components/dashboard/alerts'
 
 export default async function AlertesPage() {
-  const session = await getServerSession(authOptions)
-  if (!session?.user) redirect('/login')
+  const { userId: clerkId } = await auth()
+  if (!clerkId) redirect('/login')
 
-  const userId = (session.user as any).id
+  const user = await getUserByClerkId(clerkId)
+  if (!user) redirect('/onboarding')
 
   const business = await prisma.business.findFirst({
-    where: { userId, isActive: true },
-    include: {
-      alerts: { orderBy: { createdAt: 'desc' } },
-    },
+    where: { userId: user.id, isActive: true },
+    include: { alerts: { orderBy: { createdAt: 'desc' } } },
   })
 
   const alerts = business?.alerts.map(a => ({
-    id: a.id,
-    type: a.type,
-    title: a.title,
-    message: a.message,
-    priority: a.priority,
-    isRead: a.isRead,
-    createdAt: a.createdAt.toISOString(),
+    id: a.id, type: a.type, title: a.title, message: a.message,
+    priority: a.priority, isRead: a.isRead, createdAt: a.createdAt.toISOString(),
   })) ?? []
 
   return (

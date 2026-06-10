@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
+import { auth, currentUser } from '@clerk/nextjs/server'
 import { z } from 'zod'
-import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getOrCreateUser } from '@/lib/user'
 import {
   calculateLocalScore,
   generateWeeklyTasks,
@@ -14,7 +14,7 @@ import { generateCoachMessage } from '@/lib/ai'
 
 const schema = z.object({
   businessName: z.string().min(2),
-  address: z.string().min(3),
+  address: z.string().min(0),
   city: z.string().min(2),
   category: z.string().min(2),
   website: z.string().optional(),
@@ -24,21 +24,18 @@ const schema = z.object({
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions)
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
-    }
+    const { userId: clerkId } = await auth()
+    if (!clerkId) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
 
-    const userId = (session.user as any).id
-    const plan = (session.user as any).plan ?? 'FREE'
+    const clerkUser = await currentUser()
+    const email = clerkUser?.emailAddresses[0]?.emailAddress ?? ''
+    const name = [clerkUser?.firstName, clerkUser?.lastName].filter(Boolean).join(' ') || null
 
-    const body = await req.json()
-    const data = schema.parse(body)
+    const user = await getOrCreateUser(clerkId, email, name)
 
-    // Check free plan limits
-    if (plan === 'FREE') {
+    if (user.plan === 'FREE') {
       const existingAnalyses = await prisma.analysis.count({
-        where: { business: { userId } },
+        where: { business: { userId: user.id } },
       })
       if (existingAnalyses >= 1) {
         return NextResponse.json(
@@ -48,18 +45,20 @@ export async function POST(req: Request) {
       }
     }
 
+    const body = await req.json()
+    const data = schema.parse(body)
+
     const businessData = simulateBusinessData(data)
     const { score, breakdown } = calculateLocalScore(businessData)
 
-    // Find existing business or create new one
     let business = await prisma.business.findFirst({
-      where: { userId, name: { contains: data.businessName, mode: 'insensitive' } },
+      where: { userId: user.id, name: { contains: data.businessName, mode: 'insensitive' } },
     })
 
     if (!business) {
       business = await prisma.business.create({
         data: {
-          userId,
+          userId: user.id,
           name: data.businessName,
           address: data.address,
           city: data.city,
@@ -70,18 +69,14 @@ export async function POST(req: Request) {
       })
     }
 
-    // Get last analysis for delta
     const lastAnalysis = await prisma.analysis.findFirst({
       where: { businessId: business.id },
       orderBy: { createdAt: 'desc' },
     })
 
     const scoreDelta = lastAnalysis ? score - lastAnalysis.score : 0
-
-    // Simulate competitor
     const competitor = simulateCompetitorData(data.competitorName, score)
 
-    // Save competitor
     if (competitor) {
       await prisma.competitor.upsert({
         where: { id: `${business.id}-main` },
@@ -94,32 +89,21 @@ export async function POST(req: Request) {
           reviewCount: competitor.reviewCount,
           isMain: true,
         },
-        update: {
-          score: competitor.score,
-          rating: competitor.rating,
-          reviewCount: competitor.reviewCount,
-        },
+        update: { score: competitor.score, rating: competitor.rating, reviewCount: competitor.reviewCount },
       })
     }
 
-    // Determine priority weakness
     const weaknesses = [
       { key: 'reviews', value: breakdown.reviews, max: 30 },
       { key: 'photos', value: breakdown.photos, max: 20 },
       { key: 'googleProfile', value: breakdown.googleProfile, max: 15 },
       { key: 'posts', value: breakdown.posts, max: 10 },
     ]
-    const priorityWeakness = weaknesses
-      .sort((a, b) => (a.value / a.max) - (b.value / b.max))[0]
-
+    const priorityWeakness = weaknesses.sort((a, b) => (a.value / a.max) - (b.value / b.max))[0]
     const weaknessLabels: Record<string, string> = {
-      reviews: 'Avis Google',
-      photos: 'Photos',
-      googleProfile: 'Fiche Google',
-      posts: 'Publications Google',
+      reviews: 'Avis Google', photos: 'Photos', googleProfile: 'Fiche Google', posts: 'Publications Google',
     }
 
-    // Generate AI coach message
     const { message: coachMessage, priorityAction } = await generateCoachMessage({
       businessName: data.businessName,
       category: data.category,
@@ -135,92 +119,46 @@ export async function POST(req: Request) {
       priorityWeakness: weaknessLabels[priorityWeakness.key],
     })
 
-    // Generate tasks
     const tasks = generateWeeklyTasks(score, businessData)
+    const alerts = generateAlerts({ scoreDelta, rating: businessData.googleRating, reviewCount: businessData.googleReviewCount })
 
-    // Generate alerts
-    const alerts = generateAlerts({
-      scoreDelta,
-      rating: businessData.googleRating,
-      reviewCount: businessData.googleReviewCount,
-    })
-
-    // XP calculation
     const xpGain = 50 + (scoreDelta > 0 ? scoreDelta * 5 : 0)
     const totalXp = (lastAnalysis?.xpPoints ?? 0) + xpGain
 
-    // Save analysis
     const analysis = await prisma.analysis.create({
       data: {
         businessId: business.id,
-        score,
-        previousScore: lastAnalysis?.score,
-        scoreDelta,
-        googleRating: businessData.googleRating,
-        googleReviewCount: businessData.googleReviewCount,
-        googlePhotosCount: businessData.googlePhotosCount,
-        googlePostsCount: businessData.googlePostsCount,
-        hasWebsite: businessData.hasWebsite,
-        hasPhone: businessData.hasPhone,
-        hasHours: businessData.hasHours,
-        hasDescription: businessData.hasDescription,
+        score, previousScore: lastAnalysis?.score, scoreDelta,
+        googleRating: businessData.googleRating, googleReviewCount: businessData.googleReviewCount,
+        googlePhotosCount: businessData.googlePhotosCount, googlePostsCount: businessData.googlePostsCount,
+        hasWebsite: businessData.hasWebsite, hasPhone: businessData.hasPhone,
+        hasHours: businessData.hasHours, hasDescription: businessData.hasDescription,
         responseRate: businessData.responseRate,
-        competitorScore: competitor?.score,
-        competitorName: competitor?.name,
-        scoreDiff: competitor?.scoreDiff,
-        coachMessage,
-        priorityAction,
-        xpPoints: totalXp,
-        weekInsights: {
-          breakdown,
-          tasks,
-          alerts,
-        } as any,
+        competitorScore: competitor?.score, competitorName: competitor?.name, scoreDiff: competitor?.scoreDiff,
+        coachMessage, priorityAction, xpPoints: totalXp,
+        weekInsights: { breakdown, tasks, alerts } as any,
       },
     })
 
-    // Save weekly tasks
     const weekOf = new Date()
     weekOf.setHours(0, 0, 0, 0)
     weekOf.setDate(weekOf.getDate() - weekOf.getDay() + 1)
 
     for (const task of tasks) {
       await prisma.weeklyTask.create({
-        data: {
-          businessId: business.id,
-          title: task.title,
-          description: task.description || '',
-          category: task.category,
-          impact: task.impact,
-          weekOf,
-        },
+        data: { businessId: business.id, title: task.title, description: task.description || '', category: task.category, impact: task.impact, weekOf },
       })
     }
 
     return NextResponse.json({
-      analysisId: analysis.id,
-      businessId: business.id,
-      score,
-      previousScore: lastAnalysis?.score,
-      scoreDelta,
-      breakdown,
-      googleRating: businessData.googleRating,
-      googleReviewCount: businessData.googleReviewCount,
-      googlePhotosCount: businessData.googlePhotosCount,
-      hasWebsite: businessData.hasWebsite,
-      competitor,
-      coachMessage,
-      priorityAction,
-      tasks,
-      alerts,
-      xpPoints: totalXp,
-      level: Math.max(1, Math.floor(Math.log(totalXp / 100 + 1) / Math.log(2)) + 1),
+      analysisId: analysis.id, businessId: business.id,
+      score, previousScore: lastAnalysis?.score, scoreDelta,
+      breakdown, googleRating: businessData.googleRating, googleReviewCount: businessData.googleReviewCount,
+      googlePhotosCount: businessData.googlePhotosCount, hasWebsite: businessData.hasWebsite,
+      competitor, coachMessage, priorityAction, tasks, alerts, xpPoints: totalXp,
     })
-
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Données invalides' }, { status: 400 })
-    }
+    if (error instanceof z.ZodError) return NextResponse.json({ error: 'Données invalides' }, { status: 400 })
     console.error('Analysis error:', error)
     return NextResponse.json({ error: 'Erreur lors de l\'analyse' }, { status: 500 })
   }

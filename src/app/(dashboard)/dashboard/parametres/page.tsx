@@ -1,20 +1,14 @@
-import { getServerSession } from 'next-auth'
+import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
+import { getUserByClerkId } from '@/lib/user'
 import { ParametresClient } from './parametres-client'
 
 export default async function ParametresPage() {
-  const session = await getServerSession(authOptions)
-  if (!session?.user) redirect('/login')
+  const { userId: clerkId } = await auth()
+  if (!clerkId) redirect('/login')
 
-  const userId = (session.user as any).id
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { id: true, name: true, email: true, plan: true, password: true, stripeCustomerId: true, stripeCurrentPeriodEnd: true },
-  })
-
-  if (!user) redirect('/login')
+  const user = await getUserByClerkId(clerkId)
+  if (!user) redirect('/onboarding')
 
   return (
     <ParametresClient
@@ -23,7 +17,6 @@ export default async function ParametresPage() {
         email: user.email,
         plan: user.plan,
         hasStripe: !!user.stripeCustomerId,
-        hasPassword: !!user.password,
         periodEnd: user.stripeCurrentPeriodEnd?.toISOString(),
       }}
     />

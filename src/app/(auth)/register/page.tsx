@@ -1,76 +1,15 @@
-'use client'
-
+import { SignUp } from '@clerk/nextjs'
 import Link from 'next/link'
-import { useState, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { MapPin, Mail, Lock, User, ArrowRight, AlertCircle, Check } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { signIn } from 'next-auth/react'
+import { MapPin, Check } from 'lucide-react'
 
-function RegisterForm() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const plan = searchParams.get('plan')
+const benefits = [
+  'Score Local calculé en 60 secondes',
+  'Analyse concurrentielle automatique',
+  '5 missions personnalisées cette semaine',
+  'Coach IA inclus dans le plan gratuit',
+]
 
-  const [formData, setFormData] = useState({ name: '', email: '', password: '' })
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
-
-    if (formData.password.length < 8) {
-      setError('Le mot de passe doit contenir au moins 8 caractères')
-      setLoading(false)
-      return
-    }
-
-    try {
-      const res = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        setError(data.error || 'Erreur lors de la création du compte')
-        setLoading(false)
-        return
-      }
-
-      // Auto sign in
-      const signInResult = await signIn('credentials', {
-        email: formData.email,
-        password: formData.password,
-        redirect: false,
-      })
-
-      if (signInResult?.error) {
-        setError('Compte créé mais connexion échouée. Connectez-vous manuellement.')
-        setLoading(false)
-        return
-      }
-
-      router.push('/onboarding')
-    } catch {
-      setError('Erreur réseau. Réessayez.')
-      setLoading(false)
-    }
-  }
-
-  const benefits = [
-    'Score Local calculé en 60 secondes',
-    'Analyse concurrentielle automatique',
-    '5 missions personnalisées cette semaine',
-    'Coach IA inclus dans le plan gratuit',
-  ]
-
+export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-dark-950 flex">
       {/* Left panel */}
@@ -107,102 +46,16 @@ function RegisterForm() {
         </div>
       </div>
 
-      {/* Right panel */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md"
-        >
-          <div className="lg:hidden mb-8">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
-                <MapPin className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-bold text-white text-lg">LocalScore<span className="text-primary-400">.ai</span></span>
-            </Link>
+      {/* Right panel — Clerk SignUp */}
+      <div className="flex-1 flex flex-col items-center justify-center p-8 gap-8">
+        <div className="lg:hidden flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+            <MapPin className="w-4 h-4 text-white" />
           </div>
-
-          <h1 className="text-3xl font-bold text-white mb-2">Créer un compte</h1>
-          <p className="text-dark-400 mb-8">
-            {plan ? `Plan ${plan.charAt(0).toUpperCase() + plan.slice(1)} sélectionné` : 'Gratuit, sans engagement'}
-          </p>
-
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center gap-2 bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 mb-6"
-            >
-              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
-              <p className="text-red-400 text-sm">{error}</p>
-            </motion.div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <Input
-              label="Votre nom"
-              type="text"
-              id="name"
-              placeholder="Jean Dupont"
-              value={formData.name}
-              onChange={e => setFormData(p => ({ ...p, name: e.target.value }))}
-              icon={<User className="w-4 h-4" />}
-              required
-            />
-
-            <Input
-              label="Email professionnel"
-              type="email"
-              id="email"
-              placeholder="jean@moncommerce.fr"
-              value={formData.email}
-              onChange={e => setFormData(p => ({ ...p, email: e.target.value }))}
-              icon={<Mail className="w-4 h-4" />}
-              required
-              autoComplete="email"
-            />
-
-            <Input
-              label="Mot de passe"
-              type="password"
-              id="password"
-              placeholder="Minimum 8 caractères"
-              value={formData.password}
-              onChange={e => setFormData(p => ({ ...p, password: e.target.value }))}
-              icon={<Lock className="w-4 h-4" />}
-              required
-              autoComplete="new-password"
-            />
-
-            <Button type="submit" loading={loading} className="w-full" size="lg">
-              Créer mon compte gratuit
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </form>
-
-          <p className="text-dark-500 text-xs text-center mt-4">
-            En créant un compte, vous acceptez nos{' '}
-            <a href="#" className="text-dark-400 underline">CGU</a> et notre{' '}
-            <a href="#" className="text-dark-400 underline">politique de confidentialité</a>.
-          </p>
-
-          <p className="text-center text-dark-400 text-sm mt-6">
-            Déjà un compte ?{' '}
-            <Link href="/login" className="text-primary-400 hover:text-primary-300 font-medium transition-colors">
-              Se connecter
-            </Link>
-          </p>
-        </motion.div>
+          <span className="font-bold text-white text-lg">LocalScore<span className="text-primary-400">.ai</span></span>
+        </div>
+        <SignUp />
       </div>
     </div>
-  )
-}
-
-export default function RegisterPage() {
-  return (
-    <Suspense>
-      <RegisterForm />
-    </Suspense>
   )
 }
