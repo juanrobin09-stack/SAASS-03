@@ -16,15 +16,32 @@ async function downgradeIfExpired(user: User): Promise<User> {
 }
 
 export async function getOrCreateUser(clerkId: string, email: string, name?: string | null) {
-  let user = await prisma.user.findUnique({ where: { clerkId } })
+  const existing = await prisma.user.findUnique({ where: { clerkId } })
 
-  if (!user) {
-    user = await prisma.user.create({
+  if (!existing) {
+    const user = await prisma.user.create({
       data: { clerkId, email, name: name ?? null },
     })
+    return downgradeIfExpired(user)
   }
 
-  return downgradeIfExpired(user)
+  // Keep user data in sync with Clerk on every authenticated request
+  const needsUpdate =
+    existing.email !== email ||
+    (name != null && existing.name !== name)
+
+  if (needsUpdate) {
+    const updated = await prisma.user.update({
+      where: { id: existing.id },
+      data: {
+        email,
+        ...(name != null ? { name } : {}),
+      },
+    })
+    return downgradeIfExpired(updated)
+  }
+
+  return downgradeIfExpired(existing)
 }
 
 export async function getUserByClerkId(clerkId: string) {

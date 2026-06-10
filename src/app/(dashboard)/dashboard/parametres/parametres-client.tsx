@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { formatDate } from '@/lib/utils'
-import Link from 'next/link'
 
 interface ParametresClientProps {
   user: { name: string; email: string; plan: string; hasStripe: boolean; periodEnd?: string }
@@ -30,6 +29,23 @@ export function ParametresClient({ user }: ParametresClientProps) {
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [portalLoading, setPortalLoading] = useState(false)
+  const [checkoutLoading, setCheckoutLoading] = useState(false)
+
+  const handleUpgrade = async () => {
+    setCheckoutLoading(true)
+    try {
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: 'PRO' }),
+      })
+      const data = await res.json()
+      if (data.url) window.location.href = data.url
+      else setCheckoutLoading(false)
+    } catch {
+      setCheckoutLoading(false)
+    }
+  }
 
   const handleUpdateName = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -132,7 +148,7 @@ export function ParametresClient({ user }: ParametresClientProps) {
                 {user.periodEnd && <p className="text-dark-400 text-sm">Renouvellement le {formatDate(user.periodEnd)}</p>}
               </div>
               {user.plan === 'FREE' ? (
-                <Link href="/pricing"><Button size="sm">Passer au Pro</Button></Link>
+                <Button size="sm" onClick={handleUpgrade} loading={checkoutLoading}>Passer au Pro</Button>
               ) : user.hasStripe ? (
                 <Button variant="secondary" size="sm" loading={portalLoading} onClick={handleManageBilling}>
                   <CreditCard className="w-4 h-4" />Gérer la facturation<ExternalLink className="w-3 h-3" />
@@ -148,7 +164,7 @@ export function ParametresClient({ user }: ParametresClientProps) {
                   <li>• Historique complet & alertes</li>
                   <li>• Export PDF premium</li>
                 </ul>
-                <Link href="/pricing"><Button className="w-full" size="sm">Passer au Pro — 19€/mois</Button></Link>
+                <Button className="w-full" size="sm" onClick={handleUpgrade} loading={checkoutLoading}>Passer au Pro — 19€/mois</Button>
               </div>
             )}
           </CardContent>

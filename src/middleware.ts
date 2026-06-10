@@ -6,14 +6,26 @@ const isProtectedRoute = createRouteMatcher([
   '/onboarding(.*)',
 ])
 
+// Routes that make no sense for an already-authenticated user
+const isGuestOnlyRoute = createRouteMatcher([
+  '/',
+  '/login',
+  '/register',
+])
+
 export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) {
-    const { userId } = await auth()
-    if (!userId) {
-      const loginUrl = new URL('/login', req.url)
-      loginUrl.searchParams.set('redirect_url', req.url)
-      return NextResponse.redirect(loginUrl)
-    }
+  const { userId } = await auth()
+
+  // Authenticated users visiting the landing or auth pages → send to dashboard
+  if (userId && isGuestOnlyRoute(req)) {
+    return NextResponse.redirect(new URL('/dashboard', req.url))
+  }
+
+  // Unauthenticated users visiting private routes → send to login
+  if (!userId && isProtectedRoute(req)) {
+    const loginUrl = new URL('/login', req.url)
+    loginUrl.searchParams.set('redirect_url', req.url)
+    return NextResponse.redirect(loginUrl)
   }
 })
 

@@ -6,7 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Logo } from '@/components/ui/logo'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, LayoutDashboard, LogOut } from 'lucide-react'
+import { useAuth, SignOutButton } from '@clerk/nextjs'
 
 const navLinks = [
   { href: '#fonctionnalites', label: 'Fonctionnalités' },
@@ -18,6 +19,7 @@ const navLinks = [
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { isSignedIn, isLoaded } = useAuth()
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20)
@@ -50,17 +52,39 @@ export function Navbar() {
             ))}
           </div>
 
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/login">
-              <Button variant="ghost" size="sm" className="text-dark-300 hover:text-white">
-                Connexion
-              </Button>
-            </Link>
-            <Link href="/register">
-              <Button size="sm" className="shadow-glow">
-                Essai gratuit
-              </Button>
-            </Link>
+          {/* Auth-aware CTA — desktop. Renders nothing until Clerk is loaded to avoid flash. */}
+          <div className="hidden md:flex items-center gap-3 min-w-[180px] justify-end">
+            {isLoaded && (
+              isSignedIn ? (
+                <>
+                  <Link href="/dashboard">
+                    <Button variant="secondary" size="sm" className="gap-1.5">
+                      <LayoutDashboard className="w-3.5 h-3.5" />
+                      Dashboard
+                    </Button>
+                  </Link>
+                  <SignOutButton redirectUrl="/">
+                    <Button variant="ghost" size="sm" className="text-dark-400 hover:text-red-400 gap-1.5">
+                      <LogOut className="w-3.5 h-3.5" />
+                      Déconnexion
+                    </Button>
+                  </SignOutButton>
+                </>
+              ) : (
+                <>
+                  <Link href="/login">
+                    <Button variant="ghost" size="sm" className="text-dark-300 hover:text-white">
+                      Connexion
+                    </Button>
+                  </Link>
+                  <Link href="/register">
+                    <Button size="sm" className="shadow-glow">
+                      Essai gratuit
+                    </Button>
+                  </Link>
+                </>
+              )
+            )}
           </div>
 
           <button
@@ -93,14 +117,38 @@ export function Navbar() {
                   {item.label}
                 </a>
               ))}
-              <div className="pt-3 flex flex-col gap-2">
-                <Link href="/login" onClick={() => setIsMenuOpen(false)}>
-                  <Button variant="secondary" className="w-full">Connexion</Button>
-                </Link>
-                <Link href="/register" onClick={() => setIsMenuOpen(false)}>
-                  <Button className="w-full">Essai gratuit — sans carte</Button>
-                </Link>
-              </div>
+              {isLoaded && (
+                <div className="pt-3 flex flex-col gap-2">
+                  {isSignedIn ? (
+                    <>
+                      <Link href="/dashboard" onClick={() => setIsMenuOpen(false)}>
+                        <Button variant="secondary" className="w-full gap-2">
+                          <LayoutDashboard className="w-4 h-4" />
+                          Mon dashboard
+                        </Button>
+                      </Link>
+                      <SignOutButton redirectUrl="/">
+                        <button
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-dark-400 hover:text-red-400 hover:bg-red-500/8 rounded-lg transition-colors text-sm font-medium"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <LogOut className="w-4 h-4" />
+                          Déconnexion
+                        </button>
+                      </SignOutButton>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/login" onClick={() => setIsMenuOpen(false)}>
+                        <Button variant="secondary" className="w-full">Connexion</Button>
+                      </Link>
+                      <Link href="/register" onClick={() => setIsMenuOpen(false)}>
+                        <Button className="w-full">Essai gratuit — sans carte</Button>
+                      </Link>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
           </motion.div>
         )}
