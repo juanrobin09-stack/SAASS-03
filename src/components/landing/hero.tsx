@@ -2,8 +2,9 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, Shield, TrendingUp, Star, CheckCircle2 } from 'lucide-react'
+import { ArrowRight, Shield, TrendingUp, Star, CheckCircle2, Play } from 'lucide-react'
 
 export function Hero() {
   return (
@@ -72,9 +73,10 @@ export function Hero() {
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
               </Button>
             </Link>
-            <Link href="#comment-ca-marche" className="w-full sm:w-auto">
+            <Link href="#demo" className="w-full sm:w-auto">
               <Button variant="ghost" size="xl" className="text-dark-300 hover:text-white text-base px-8 w-full sm:w-auto">
-                Comment ça marche
+                <Play className="w-4 h-4 shrink-0" />
+                Voir la démo
               </Button>
             </Link>
           </motion.div>
@@ -100,10 +102,11 @@ export function Hero() {
 
           {/* Dashboard Preview */}
           <motion.div
+            id="demo"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full max-w-5xl relative"
+            className="w-full max-w-5xl relative scroll-mt-24"
           >
             {/* Glow behind preview */}
             <div className="absolute -inset-x-4 sm:-inset-x-8 top-8 bottom-0 bg-primary-600/10 rounded-3xl blur-3xl pointer-events-none" />
@@ -139,20 +142,38 @@ export function Hero() {
 }
 
 function DashboardPreview() {
+  // Animated score count-up so the dashboard feels "alive" (AI working in real time)
+  const [score, setScore] = useState(58)
+  useEffect(() => {
+    let raf: number
+    const start = performance.now()
+    const from = 58
+    const to = 71
+    const duration = 1400
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - start) / duration)
+      const eased = 1 - Math.pow(1 - t, 3)
+      setScore(Math.round(from + (to - from) * eased))
+      if (t < 1) raf = requestAnimationFrame(tick)
+    }
+    const delay = setTimeout(() => { raf = requestAnimationFrame(tick) }, 700)
+    return () => { clearTimeout(delay); cancelAnimationFrame(raf) }
+  }, [])
+
   return (
     <div className="bg-dark-950 p-4 sm:p-7 space-y-4 sm:space-y-5">
       {/* Header row */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-2 h-2 rounded-full bg-accent-400 shrink-0" />
+            <div className="w-2 h-2 rounded-full bg-accent-400 shrink-0 animate-pulse" />
             <p className="text-dark-400 text-xs font-medium truncate">Boulangerie Artisanale — Lyon 6e</p>
           </div>
           <p className="text-white font-bold text-base sm:text-lg tracking-tight">Tableau de bord</p>
         </div>
         <div className="flex items-center gap-1.5 bg-accent-500/10 border border-accent-500/20 rounded-full px-2.5 py-1.5 shrink-0">
-          <TrendingUp className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-accent-400" />
-          <span className="text-accent-400 text-xs font-semibold">+5 pts</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-accent-400 animate-pulse shrink-0" />
+          <span className="text-accent-400 text-xs font-semibold">Analyse en direct</span>
         </div>
       </div>
 
@@ -162,11 +183,11 @@ function DashboardPreview() {
         <div className="bg-gradient-to-br from-primary-600/15 to-accent-500/5 border border-primary-500/20 rounded-xl p-3 sm:p-4">
           <p className="text-dark-400 text-[10px] sm:text-xs mb-1.5 sm:mb-2 font-medium">Score Local IA</p>
           <div className="flex items-end gap-1">
-            <p className="text-4xl sm:text-5xl font-black text-white leading-none">71</p>
+            <p className="text-4xl sm:text-5xl font-black text-white leading-none tabular-nums">{score}</p>
             <p className="text-dark-500 text-xs sm:text-sm mb-0.5">/100</p>
           </div>
           <div className="mt-2 sm:mt-3 h-1.5 bg-dark-800 rounded-full overflow-hidden">
-            <div className="h-full rounded-full bg-gradient-to-r from-primary-500 to-accent-400" style={{ width: '71%' }} />
+            <div className="h-full rounded-full bg-gradient-to-r from-primary-500 to-accent-400 transition-[width] duration-700 ease-out" style={{ width: `${score}%` }} />
           </div>
         </div>
 

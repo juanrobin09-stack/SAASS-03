@@ -5,6 +5,7 @@ import { HowItWorks } from '@/components/landing/how-it-works'
 import { Pricing } from '@/components/landing/pricing'
 import { FAQ } from '@/components/landing/faq'
 import { Footer } from '@/components/landing/footer'
+import { FloatingCTA } from '@/components/landing/floating-cta'
 import { ArrowRight, CheckCircle } from 'lucide-react'
 
 export default function LandingPage() {
@@ -76,6 +77,7 @@ export default function LandingPage() {
       </section>
 
       <Footer />
+      <FloatingCTA />
     </div>
   )
 }
