@@ -46,7 +46,7 @@ export default function CguPage() {
               </div>
               <div className="p-4 bg-dark-900/50 border border-dark-800 rounded-xl">
                 <p className="text-white font-medium mb-1">Plan Pro — 19€/mois</p>
-                <p>Suivi hebdomadaire d'1 établissement, historique complet, coach IA, missions, alertes, gamification et export PDF.</p>
+                <p>Suivi hebdomadaire d'1 établissement, historique complet, coach IA, missions, alertes et gamification.</p>
               </div>
             </div>
           </section>

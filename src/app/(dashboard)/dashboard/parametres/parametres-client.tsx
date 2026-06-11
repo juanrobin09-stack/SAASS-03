@@ -172,7 +172,6 @@ export function ParametresClient({ user }: ParametresClientProps) {
                   <li>• Suivi hebdomadaire automatique</li>
                   <li>• Coach IA personnalisé</li>
                   <li>• Historique complet & alertes</li>
-                  <li>• Export PDF premium</li>
                 </ul>
                 <Button className="w-full" size="sm" onClick={handleUpgrade} loading={checkoutLoading}>Passer au Pro — 19€/mois</Button>
                 {checkoutError && <p className="text-red-400 text-xs mt-2 text-center">{checkoutError}</p>}

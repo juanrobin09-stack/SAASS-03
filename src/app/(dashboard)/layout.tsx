@@ -18,10 +18,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="flex h-dvh overflow-hidden bg-dark-950">
-      <div className="print:hidden hidden md:flex">
+      <div className="hidden md:flex">
         <Sidebar userName={user.name ?? email} userPlan={user.plan} />
       </div>
-      <main className="flex-1 overflow-y-auto print:overflow-visible">
+      <main className="flex-1 overflow-y-auto">
         <div className="pb-16 md:pb-0">
           {children}
         </div>
