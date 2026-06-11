@@ -13,7 +13,7 @@ import {
   simulateCompetitorData,
 } from '@/lib/score'
 import { generateCoachMessage } from '@/lib/ai'
-import { searchBusiness, searchNearbyCompetitors } from '@/lib/google-places'
+import { getPlaceByIdForScoring, searchBusiness, searchNearbyCompetitors } from '@/lib/google-places'
 import { awardBadges } from '@/lib/badges'
 
 const schema = z.object({
@@ -24,6 +24,7 @@ const schema = z.object({
   website: z.string().optional(),
   phone: z.string().optional(),
   competitorName: z.string().optional(),
+  placeId: z.string().optional(),
 })
 
 export async function POST(req: Request) {
@@ -50,13 +51,21 @@ export async function POST(req: Request) {
 
     const data = schema.parse(await req.json())
 
-    // — Fetch real data from Google Places API (fallback to simulation) —
+    // — Fetch real data from Google Places API —
     let businessData: Parameters<typeof calculateLocalScore>[0] | undefined
     let realPlace = null
     let dataSource: 'google' | 'simulated' = 'simulated'
 
     if (process.env.GOOGLE_PLACES_API_KEY) {
-      realPlace = await searchBusiness(data.businessName, data.city)
+      // Prefer direct placeId lookup (user selected from autocomplete) — exact match
+      if (data.placeId) {
+        realPlace = await getPlaceByIdForScoring(data.placeId)
+      }
+      // Fall back to text search if no placeId or lookup failed
+      if (!realPlace) {
+        realPlace = await searchBusiness(data.businessName, data.city)
+      }
+
       if (realPlace) {
         dataSource = 'google'
         businessData = {
@@ -71,32 +80,49 @@ export async function POST(req: Request) {
           responseRate: 0.4,
           businessAgeMonths: 24,
         }
+      } else {
+        // API key is present but the business wasn't found on Google → fail explicitly
+        return NextResponse.json(
+          {
+            error: 'Établissement introuvable sur Google Maps. Vérifiez le nom et la ville, puis réessayez.',
+            notFound: true,
+          },
+          { status: 422 }
+        )
       }
     }
 
+    // No API key (dev/staging mode): use simulation with clear flag
     if (!businessData) {
       businessData = simulateBusinessData(data)
+      dataSource = 'simulated'
     }
 
     const { score, breakdown } = calculateLocalScore(businessData)
 
-    let business = await prisma.business.findFirst({
-      where: { userId: user.id, name: { contains: data.businessName, mode: 'insensitive' } },
-    })
+    // Prefer matching by placeId (exact) to avoid duplicates
+    let business = realPlace?.placeId
+      ? await prisma.business.findFirst({ where: { userId: user.id, placeId: realPlace.placeId } })
+      : null
+    if (!business) {
+      business = await prisma.business.findFirst({
+        where: { userId: user.id, name: { contains: data.businessName, mode: 'insensitive' } },
+      })
+    }
 
     if (!business) {
       business = await prisma.business.create({
         data: {
           userId: user.id,
-          name: data.businessName,
-          address: data.address || realPlace?.address || '',
+          name: realPlace?.name || data.businessName,
+          address: realPlace?.address || data.address || '',
           city: data.city,
           category: data.category,
-          website: data.website || realPlace?.website,
-          phone: data.phone || realPlace?.phone,
-          placeId: realPlace?.placeId,
-          lat: realPlace?.lat,
-          lng: realPlace?.lng,
+          website: data.website || realPlace?.website || null,
+          phone: data.phone || realPlace?.phone || null,
+          placeId: realPlace?.placeId ?? null,
+          lat: realPlace?.lat ?? null,
+          lng: realPlace?.lng ?? null,
         },
       })
     } else if (realPlace && !business.placeId) {

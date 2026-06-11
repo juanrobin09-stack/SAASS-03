@@ -24,6 +24,7 @@ interface FormData {
   website: string
   phone: string
   competitorName: string
+  placeId: string
 }
 
 interface Suggestion {
@@ -38,8 +39,16 @@ export default function OnboardingPage() {
   const [scanning, setScanning] = useState(false)
   const [formData, setFormData] = useState<FormData>({
     businessName: '', address: '', city: '', category: '',
-    website: '', phone: '', competitorName: '',
+    website: '', phone: '', competitorName: '', placeId: '',
   })
+
+  // Auto-redirect if already onboarded
+  useEffect(() => {
+    fetch('/api/onboarding-status')
+      .then(r => r.json())
+      .then(d => { if (d.done) router.replace('/dashboard') })
+      .catch(() => {})
+  }, [router])
   const [errors, setErrors] = useState<Partial<FormData>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<{ message: string; isPlanLimit: boolean } | null>(null)
@@ -95,7 +104,7 @@ export default function OnboardingPage() {
 
   const handleSelectPlace = async (suggestion: Suggestion) => {
     setShowSuggestions(false)
-    setFormData(prev => ({ ...prev, businessName: suggestion.mainText }))
+    setFormData(prev => ({ ...prev, businessName: suggestion.mainText, placeId: suggestion.placeId }))
     setPlaceSelected(true)
 
     try {
@@ -110,6 +119,7 @@ export default function OnboardingPage() {
           phone: details.phone || prev.phone,
           website: details.website || prev.website,
           category: details.category || prev.category,
+          placeId: suggestion.placeId,
         }))
       }
     } catch {
@@ -152,10 +162,11 @@ export default function OnboardingPage() {
       if (!res.ok) {
         const err = await res.json()
         const isPlanLimit = res.status === 403
-        setSubmitError({
-          message: err.error || 'Erreur lors de l\'analyse',
-          isPlanLimit,
-        })
+        // If business not found on Google and user typed manually (no placeId), prompt to use autocomplete
+        const message = err.notFound && !formData.placeId
+          ? 'Établissement non trouvé sur Google Maps. Utilisez la liste déroulante pour sélectionner votre établissement.'
+          : (err.error || 'Erreur lors de l\'analyse')
+        setSubmitError({ message, isPlanLimit })
         setScanning(false)
         setIsSubmitting(false)
         return

@@ -31,7 +31,11 @@ export async function POST(req: Request) {
 
       const subscription = await stripe.subscriptions.retrieve(session.subscription as string)
       const priceId = subscription.items.data[0].price.id
-      const plan = getPlanFromPriceId(priceId) ?? 'PRO'
+      const plan = getPlanFromPriceId(priceId)
+      if (!plan) {
+        console.warn('[stripe/webhook] Unknown priceId in checkout.session.completed:', priceId)
+        break
+      }
 
       await prisma.user.update({
         where: { id: userId },
@@ -54,7 +58,11 @@ export async function POST(req: Request) {
 
       const subscription = await stripe.subscriptions.retrieve(subscriptionId)
       const priceId = subscription.items.data[0].price.id
-      const plan = getPlanFromPriceId(priceId) ?? 'PRO'
+      const plan = getPlanFromPriceId(priceId)
+      if (!plan) {
+        console.warn('[stripe/webhook] Unknown priceId in invoice.payment_succeeded:', priceId)
+        break
+      }
       const data = {
         plan,
         stripePriceId: priceId,

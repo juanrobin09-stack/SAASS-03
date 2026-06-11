@@ -7,7 +7,7 @@ import {
   simulateBusinessData,
 } from './score'
 import { generateCoachMessage } from './ai'
-import { searchBusiness, searchNearbyCompetitors } from './google-places'
+import { getPlaceByIdForScoring, searchBusiness, searchNearbyCompetitors } from './google-places'
 import { awardBadges } from './badges'
 
 export interface ScanResult {
@@ -31,7 +31,13 @@ export async function runWeeklyScan(business: Business): Promise<ScanResult | nu
   let dataSource: 'google' | 'simulated' = 'simulated'
 
   if (process.env.GOOGLE_PLACES_API_KEY) {
-    realPlace = await searchBusiness(business.name, business.city)
+    // Prefer direct placeId lookup for accuracy (faster + exact match)
+    if (business.placeId) {
+      realPlace = await getPlaceByIdForScoring(business.placeId)
+    }
+    if (!realPlace) {
+      realPlace = await searchBusiness(business.name, business.city)
+    }
     if (realPlace) {
       dataSource = 'google'
       businessData = {
@@ -87,9 +93,11 @@ export async function runWeeklyScan(business: Business): Promise<ScanResult | nu
   // — 2. Competitor (real Google data only; keep previous otherwise) —
   let competitor: { name: string; score: number; rating: number; reviewCount: number; scoreDiff: number } | null = null
 
-  if (process.env.GOOGLE_PLACES_API_KEY && (realPlace?.lat ?? business.lat) && (realPlace?.lng ?? business.lng)) {
-    const lat = realPlace?.lat ?? business.lat!
-    const lng = realPlace?.lng ?? business.lng!
+  const scanLat = realPlace?.lat ?? business.lat
+  const scanLng = realPlace?.lng ?? business.lng
+  if (process.env.GOOGLE_PLACES_API_KEY && scanLat && scanLng) {
+    const lat = scanLat
+    const lng = scanLng
     const nearby = await searchNearbyCompetitors(business.category, lat, lng, business.placeId ?? undefined)
     const top = nearby
       .filter(c => c.name !== business.name)

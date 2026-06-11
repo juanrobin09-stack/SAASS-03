@@ -55,6 +55,28 @@ function parsePlaceResult(place: any): PlaceData {
   }
 }
 
+export async function getPlaceByIdForScoring(placeId: string): Promise<PlaceData | null> {
+  if (!PLACES_API_KEY || !placeId) return null
+  try {
+    const res = await fetch(`${BASE}/places/${placeId}`, {
+      headers: {
+        'X-Goog-Api-Key': PLACES_API_KEY,
+        'X-Goog-FieldMask': [
+          'id', 'displayName', 'rating', 'userRatingCount',
+          'photos', 'websiteUri', 'nationalPhoneNumber',
+          'regularOpeningHours', 'location', 'formattedAddress',
+        ].join(','),
+      },
+    })
+    if (!res.ok) return null
+    const place = await res.json()
+    if (!place.id) return null
+    return parsePlaceResult({ ...place, id: placeId })
+  } catch {
+    return null
+  }
+}
+
 export async function searchBusiness(name: string, city: string): Promise<PlaceData | null> {
   if (!PLACES_API_KEY) return null
 

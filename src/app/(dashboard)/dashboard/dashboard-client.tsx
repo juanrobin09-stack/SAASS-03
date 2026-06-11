@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { TrendingUp, MapPin, RefreshCw, AlertCircle } from 'lucide-react'
+import { TrendingUp, MapPin, RefreshCw, AlertCircle, CheckCircle2, AlertTriangle } from 'lucide-react'
 import { ScoreCard } from '@/components/dashboard/score-card'
 import { WeeklyMissions } from '@/components/dashboard/weekly-missions'
 import { AICoach } from '@/components/dashboard/ai-coach'
@@ -16,7 +16,7 @@ import { Badge } from '@/components/ui/badge'
 import type { ScoreBreakdown, WeekTask, AlertItem, ScoreHistory, CoachReport } from '@/types'
 
 interface DashboardClientProps {
-  business: { id: string; name: string; city: string; category: string }
+  business: { id: string; name: string; city: string; category: string; placeId: string | null }
   analysis: {
     score: number
     previousScore?: number
@@ -26,6 +26,7 @@ interface DashboardClientProps {
     priorityAction: string
     coachReport: CoachReport | null
     xpPoints: number
+    dataSource: 'google' | 'simulated'
   }
   competitor: { name: string; score: number; scoreDiff: number } | null
   tasks: WeekTask[]
@@ -116,7 +117,18 @@ export function DashboardClient({
             <h1 className="text-xl sm:text-2xl font-bold text-white truncate">{business.name}</h1>
             <Badge variant="info" size="sm" className="shrink-0">{business.category}</Badge>
           </div>
-          <p className="text-dark-400 text-sm">{business.city} • {weekLabel}</p>
+          <div className="flex items-center gap-2 flex-wrap">
+            <p className="text-dark-400 text-sm">{business.city} • {weekLabel}</p>
+            {analysis.dataSource === 'google' ? (
+              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-accent-400 bg-accent-500/10 border border-accent-500/20 rounded-full px-2 py-0.5">
+                <CheckCircle2 className="w-2.5 h-2.5" /> Données Google réelles
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 rounded-full px-2 py-0.5">
+                <AlertTriangle className="w-2.5 h-2.5" /> Données simulées
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-2 flex-shrink-0">

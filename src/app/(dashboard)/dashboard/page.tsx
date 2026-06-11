@@ -28,7 +28,7 @@ export default async function DashboardPage() {
   const latestAnalysis = business.analyses[0]
   const previousAnalysis = business.analyses[1]
   const competitor = business.competitors[0]
-  const weekInsights = latestAnalysis.weekInsights as any
+  const weekInsights = (latestAnalysis.weekInsights ?? {}) as any
 
   const scoreHistory = [...business.analyses].reverse().map(a => ({
     date: a.createdAt.toISOString(),
@@ -44,7 +44,7 @@ export default async function DashboardPage() {
 
   return (
     <DashboardClient
-      business={{ id: business.id, name: business.name, city: business.city, category: business.category }}
+      business={{ id: business.id, name: business.name, city: business.city, category: business.category, placeId: business.placeId ?? null }}
       analysis={{
         score: latestAnalysis.score,
         previousScore: previousAnalysis?.score,
@@ -54,6 +54,7 @@ export default async function DashboardPage() {
         priorityAction: latestAnalysis.priorityAction ?? '',
         coachReport: (weekInsights?.coachReport ?? null) as import('@/types').CoachReport | null,
         xpPoints: latestAnalysis.xpPoints,
+        dataSource: (weekInsights?.dataSource ?? 'simulated') as 'google' | 'simulated',
       }}
       competitor={competitor ? { name: competitor.name, score: competitor.score ?? 0, scoreDiff: (competitor.score ?? 0) - latestAnalysis.score } : null}
       tasks={business.weeklyTasks.map(t => ({ id: t.id, title: t.title, description: t.description ?? '', category: t.category, impact: t.impact, isCompleted: t.isCompleted }))}
