@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MapPin, Building2, Tag, Globe, Phone, Target, ArrowRight, Sparkles, Search, Loader2, AlertCircle } from 'lucide-react'
+import { MapPin, Building2, Tag, Globe, Phone, Target, ArrowRight, Sparkles, Search, Loader2, AlertCircle, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScanAnimation } from '@/components/onboarding/scan-animation'
@@ -190,9 +190,9 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-dark-950 flex items-center justify-center px-4 py-16">
-      <div className="absolute inset-0">
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary-600/8 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-dark-950 flex items-center justify-center px-4 py-16 overflow-x-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] max-w-full h-[400px] bg-primary-600/8 rounded-full blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-lg">
@@ -208,7 +208,7 @@ export default function OnboardingPage() {
             <span className="font-bold text-white text-xl">LocalScore.ai</span>
           </div>
 
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
             {step === 1 ? 'Votre établissement' : 'Détails optionnels'}
           </h1>
           <p className="text-dark-400">
@@ -247,7 +247,7 @@ export default function OnboardingPage() {
                   <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400 pointer-events-none" />
                   <input
                     type="text"
-                    placeholder="ex: La Tourette, Restaurant Le Marché…"
+                    placeholder="ex: La Tourette, Le Marché…"
                     value={formData.businessName}
                     onChange={handleBusinessNameChange}
                     onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
@@ -278,19 +278,19 @@ export default function OnboardingPage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -4 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute z-50 w-full mt-1 bg-dark-900 border border-dark-700 rounded-xl shadow-xl overflow-hidden"
+                      className="absolute z-50 w-full mt-1 bg-dark-900 border border-dark-700 rounded-xl shadow-xl overflow-hidden max-h-[240px] overflow-y-auto"
                     >
                       {suggestions.map((s) => (
                         <button
                           key={s.placeId}
                           type="button"
                           onMouseDown={() => handleSelectPlace(s)}
-                          className="w-full text-left px-4 py-3 hover:bg-dark-800 transition-colors border-b border-dark-800 last:border-0 flex items-start gap-3"
+                          className="w-full text-left px-4 py-3 min-h-[52px] hover:bg-dark-800 transition-colors border-b border-dark-800 last:border-0 flex items-start gap-3"
                         >
                           <MapPin className="w-4 h-4 text-primary-400 mt-0.5 flex-shrink-0" />
-                          <div>
-                            <p className="text-white text-sm font-medium">{s.mainText}</p>
-                            <p className="text-dark-400 text-xs mt-0.5">{s.secondaryText}</p>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-white text-sm font-medium truncate">{s.mainText}</p>
+                            <p className="text-dark-400 text-xs mt-0.5 truncate">{s.secondaryText}</p>
                           </div>
                         </button>
                       ))}
@@ -326,20 +326,21 @@ export default function OnboardingPage() {
                   Catégorie d'activité *
                 </label>
                 <div className="relative">
-                  <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" />
+                  <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400 pointer-events-none z-10" />
                   <select
                     id="category"
                     value={formData.category}
                     onChange={update('category')}
-                    className={`w-full rounded-lg border ${errors.category ? 'border-red-500' : 'border-dark-700'} bg-dark-900 text-white pl-10 pr-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all appearance-none`}
+                    className={`w-full rounded-lg border ${errors.category ? 'border-red-500' : 'border-dark-700 hover:border-dark-600'} bg-dark-900 text-white text-base pl-10 pr-10 py-3 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all appearance-none truncate`}
                   >
                     <option value="">Sélectionnez une catégorie</option>
                     {CATEGORIES.map(c => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-dark-400 pointer-events-none" />
                 </div>
-                {errors.category && <p className="mt-1.5 text-sm text-red-400">{errors.category}</p>}
+                {errors.category && <p className="mt-1.5 text-sm text-red-400 break-words">{errors.category}</p>}
               </div>
 
               <Button onClick={handleNext} className="w-full" size="lg">
@@ -402,8 +403,8 @@ export default function OnboardingPage() {
                     : 'bg-red-500/10 border-red-500/30 text-red-300'
                 }`}>
                   <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium">{submitError.message}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium break-words">{submitError.message}</p>
                     {submitError.isPlanLimit && (
                       <a href="/pricing" className="text-xs underline mt-1 block text-yellow-400 hover:text-yellow-300">
                         Passer au plan Pro pour relancer une analyse →

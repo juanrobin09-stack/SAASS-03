@@ -58,14 +58,14 @@ function SectionContent({ section }: { section: CoachSection }) {
           {cfg.label}
         </span>
         {section.insight && (
-          <span className="text-xs text-dark-400 bg-dark-800 px-2.5 py-1 rounded-full border border-dark-700">
+          <span className="text-xs text-dark-400 bg-dark-800 px-2.5 py-1 rounded-full border border-dark-700 break-words max-w-full">
             {section.insight}
           </span>
         )}
       </div>
 
       {/* Content */}
-      <p className="text-dark-300 text-sm leading-relaxed mb-4">{section.content}</p>
+      <p className="text-dark-300 text-sm leading-relaxed mb-4 break-words">{section.content}</p>
 
       {/* Actions */}
       {section.actions && section.actions.length > 0 && (
@@ -75,7 +75,7 @@ function SectionContent({ section }: { section: CoachSection }) {
               <div className="w-5 h-5 rounded-md bg-primary-600/20 border border-primary-500/30 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-primary-400 text-[10px] font-bold">{i + 1}</span>
               </div>
-              <p className="text-dark-300 text-sm leading-snug">{action}</p>
+              <p className="text-dark-300 text-sm leading-snug break-words min-w-0">{action}</p>
             </div>
           ))}
         </div>
@@ -132,7 +132,7 @@ function RichCoach({ report, score, delta, businessName }: {
 
         {/* Summary */}
         <div className="mb-5 p-3.5 rounded-xl bg-gradient-to-r from-primary-600/8 to-accent-500/8 border border-primary-500/15">
-          <p className="text-dark-200 text-sm leading-relaxed">{report.summary}</p>
+          <p className="text-dark-200 text-sm leading-relaxed break-words">{report.summary}</p>
         </div>
 
         {/* Section tab pills — horizontal scroll */}

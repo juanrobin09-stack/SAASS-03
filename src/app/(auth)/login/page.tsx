@@ -41,14 +41,16 @@ export default function LoginPage() {
       </div>
 
       {/* Right panel — Clerk SignIn */}
-      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 gap-6 sm:gap-8">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 gap-6 sm:gap-8 overflow-x-hidden">
         <div className="lg:hidden">
           <Logo href="/" size="md" />
         </div>
-        <SignIn
-          fallbackRedirectUrl="/dashboard"
-          signUpUrl="/register"
-        />
+        <div className="w-full max-w-[400px] flex justify-center">
+          <SignIn
+            fallbackRedirectUrl="/dashboard"
+            signUpUrl="/register"
+          />
+        </div>
       </div>
     </div>
   )

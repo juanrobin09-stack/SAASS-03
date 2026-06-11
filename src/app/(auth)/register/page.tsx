@@ -45,14 +45,16 @@ export default function RegisterPage() {
       </div>
 
       {/* Right panel — Clerk SignUp */}
-      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 gap-6 sm:gap-8">
+      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 gap-6 sm:gap-8 overflow-x-hidden">
         <div className="lg:hidden">
           <Logo href="/" size="md" />
         </div>
-        <SignUp
-          fallbackRedirectUrl="/onboarding"
-          signInUrl="/login"
-        />
+        <div className="w-full max-w-[400px] flex justify-center">
+          <SignUp
+            fallbackRedirectUrl="/onboarding"
+            signInUrl="/login"
+          />
+        </div>
       </div>
     </div>
   )

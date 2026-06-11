@@ -97,8 +97,8 @@ export function ScanAnimation({ businessName, onComplete }: ScanAnimationProps) 
           <h2 className="text-2xl font-bold text-white text-center mb-2">
             Analyse en cours…
           </h2>
-          <p className="text-dark-400 text-center">
-            Nous analysons <span className="text-primary-400 font-medium">"{businessName}"</span>
+          <p className="text-dark-400 text-center break-words max-w-full px-2">
+            Nous analysons <span className="text-primary-400 font-medium">&laquo;&nbsp;{businessName}&nbsp;&raquo;</span>
           </p>
         </motion.div>
 
@@ -152,7 +152,7 @@ export function ScanAnimation({ businessName, onComplete }: ScanAnimationProps) 
                     )}
                   </div>
 
-                  <span className={`text-sm font-medium transition-colors ${
+                  <span className={`text-sm font-medium transition-colors min-w-0 flex-1 truncate ${
                     isCompleted ? 'text-dark-400 line-through' : isCurrent ? 'text-white' : 'text-dark-600'
                   }`}>
                     {step.label}

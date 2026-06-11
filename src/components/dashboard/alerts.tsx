@@ -64,12 +64,13 @@ export function Alerts({ alerts, onDismiss }: AlertsProps) {
                     <div className={`flex items-start gap-3 p-3 rounded-xl border ${config.color} ${!alert.isRead ? 'border-opacity-50' : 'opacity-60'}`}>
                       <div className="flex-shrink-0 mt-0.5">{config.icon}</div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-white font-medium text-sm">{alert.title}</p>
-                        <p className="text-sm opacity-80 mt-0.5 leading-relaxed">{alert.message}</p>
+                        <p className="text-white font-medium text-sm break-words">{alert.title}</p>
+                        <p className="text-sm opacity-80 mt-0.5 leading-relaxed break-words">{alert.message}</p>
                       </div>
                       <button
                         onClick={() => handleDismiss(alert.id)}
-                        className="flex-shrink-0 text-current opacity-50 hover:opacity-100 transition-opacity p-2 -m-1"
+                        aria-label="Fermer l'alerte"
+                        className="flex-shrink-0 text-current opacity-50 hover:opacity-100 transition-opacity p-1.5 -mr-1"
                       >
                         <X className="w-4 h-4" />
                       </button>

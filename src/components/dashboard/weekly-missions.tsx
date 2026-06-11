@@ -59,12 +59,12 @@ export function WeeklyMissions({ tasks, weekOf }: WeeklyMissionsProps) {
     <Card>
       <CardContent>
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
+        <div className="flex items-start justify-between gap-3 mb-6">
+          <div className="min-w-0">
             <h3 className="text-white font-semibold text-lg">Missions de la semaine</h3>
-            {weekOf && <p className="text-dark-400 text-sm mt-0.5">{weekOf}</p>}
+            {weekOf && <p className="text-dark-400 text-sm mt-0.5 truncate">{weekOf}</p>}
           </div>
-          <div className="text-right">
+          <div className="text-right flex-shrink-0 whitespace-nowrap">
             <div className="text-accent-400 font-bold text-lg">+{earnedPoints}/{totalPoints} pts</div>
             <div className="text-dark-400 text-xs">{completedCount}/{localTasks.length} complétées</div>
           </div>
@@ -100,7 +100,7 @@ export function WeeklyMissions({ tasks, weekOf }: WeeklyMissionsProps) {
                 onClick={() => handleComplete(task.id)}
               >
                 {/* Checkbox */}
-                <div className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all duration-200 mt-0.5 ${
+                <div className={`w-7 h-7 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all duration-200 mt-0.5 ${
                   task.isCompleted ? 'bg-accent-500 border-accent-500' : 'border-dark-600 group-hover:border-primary-500'
                 }`}>
                   <AnimatePresence>
@@ -120,16 +120,16 @@ export function WeeklyMissions({ tasks, weekOf }: WeeklyMissionsProps) {
                       {config.label}
                     </span>
                   </div>
-                  <p className={`font-medium text-sm ${task.isCompleted ? 'text-dark-400 line-through' : 'text-white'}`}>
+                  <p className={`font-medium text-sm break-words ${task.isCompleted ? 'text-dark-400 line-through' : 'text-white'}`}>
                     {task.title}
                   </p>
                   {task.description && (
-                    <p className="text-dark-500 text-xs mt-0.5">{task.description}</p>
+                    <p className="text-dark-500 text-xs mt-0.5 break-words">{task.description}</p>
                   )}
                 </div>
 
                 {/* Impact */}
-                <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-2 flex-shrink-0 whitespace-nowrap">
                   <div className={`text-sm font-bold ${task.isCompleted ? 'text-accent-500' : 'text-accent-400'}`}>
                     +{task.impact} pts
                   </div>

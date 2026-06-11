@@ -112,20 +112,20 @@ export function DashboardClient({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-8">
         <div className="min-w-0">
-          <div className="flex items-center gap-2 mb-1 flex-wrap">
+          <div className="flex items-center gap-2 mb-1 flex-wrap min-w-0">
             <MapPin className="w-4 h-4 text-primary-400 shrink-0" />
-            <h1 className="text-xl sm:text-2xl font-bold text-white truncate">{business.name}</h1>
-            <Badge variant="info" size="sm" className="shrink-0">{business.category}</Badge>
+            <h1 className="text-xl sm:text-2xl font-bold text-white truncate max-w-full">{business.name}</h1>
+            <Badge variant="info" size="sm" className="shrink-0 whitespace-nowrap">{business.category}</Badge>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="text-dark-400 text-sm">{business.city} • {weekLabel}</p>
+            <p className="text-dark-400 text-sm truncate max-w-full">{business.city} • {weekLabel}</p>
             {analysis.dataSource === 'google' ? (
-              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-accent-400 bg-accent-500/10 border border-accent-500/20 rounded-full px-2 py-0.5">
-                <CheckCircle2 className="w-2.5 h-2.5" /> Données Google réelles
+              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-accent-400 bg-accent-500/10 border border-accent-500/20 rounded-full px-2 py-0.5 whitespace-nowrap shrink-0">
+                <CheckCircle2 className="w-2.5 h-2.5 shrink-0" /> Données Google
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 rounded-full px-2 py-0.5">
-                <AlertTriangle className="w-2.5 h-2.5" /> Données simulées
+              <span className="inline-flex items-center gap-1 text-[10px] font-medium text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 rounded-full px-2 py-0.5 whitespace-nowrap shrink-0">
+                <AlertTriangle className="w-2.5 h-2.5 shrink-0" /> Données simulées
               </span>
             )}
           </div>
@@ -148,7 +148,8 @@ export function DashboardClient({
             className="flex items-center justify-center gap-2 px-4 py-2 min-h-[40px] bg-dark-800 hover:bg-dark-700 border border-dark-700 rounded-lg text-dark-300 hover:text-white text-sm font-medium transition-all disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 shrink-0 ${refreshing ? 'animate-spin' : ''}`} />
-            <span>{refreshing ? 'Analyse en cours…' : 'Nouvelle analyse'}</span>
+            <span className="hidden xs:inline">{refreshing ? 'Analyse en cours…' : 'Nouvelle analyse'}</span>
+            <span className="xs:hidden">{refreshing ? 'Analyse…' : 'Analyser'}</span>
           </button>
         </div>
       </div>

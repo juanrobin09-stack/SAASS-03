@@ -81,7 +81,7 @@ export function ScoreCard({ score, previousScore, competitorScore, competitorNam
         <Card className="h-full">
           <CardContent className="flex flex-col items-center justify-center py-4 sm:py-8">
             <p className="text-dark-400 text-sm mb-2">Concurrent Principal</p>
-            <p className="text-dark-300 text-xs mb-4 font-medium">{competitorName || 'Meilleur concurrent'}</p>
+            <p className="text-dark-300 text-xs mb-4 font-medium truncate max-w-full px-2">{competitorName || 'Meilleur concurrent'}</p>
 
             {competitorScore ? (
               <>
@@ -105,15 +105,15 @@ export function ScoreCard({ score, previousScore, competitorScore, competitorNam
                 </div>
 
                 {competitorGap !== null && (
-                  <div className={`flex items-center gap-1.5 text-sm font-medium ${competitorGap > 0 ? 'text-orange-400' : 'text-accent-400'}`}>
+                  <div className={`flex items-center gap-1.5 text-sm font-medium whitespace-nowrap ${competitorGap > 0 ? 'text-orange-400' : 'text-accent-400'}`}>
                     {competitorGap > 0 ? (
                       <>
-                        <span className="w-2 h-2 rounded-full bg-orange-400" />
-                        <span>{competitorGap} points d'écart</span>
+                        <span className="w-2 h-2 rounded-full bg-orange-400 shrink-0" />
+                        <span>{competitorGap} pts d'écart</span>
                       </>
                     ) : (
                       <>
-                        <span className="w-2 h-2 rounded-full bg-accent-400" />
+                        <span className="w-2 h-2 rounded-full bg-accent-400 shrink-0" />
                         <span>Vous êtes devant !</span>
                       </>
                     )}

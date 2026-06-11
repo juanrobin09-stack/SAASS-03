@@ -36,17 +36,17 @@ export function ScoreHistoryChart({ data, competitorName }: ScoreHistoryChartPro
   return (
     <Card>
       <CardContent>
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-start justify-between gap-3 mb-6 flex-wrap">
           <h3 className="text-white font-semibold text-lg">Évolution du Score</h3>
-          <div className="flex items-center gap-4 text-xs">
-            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded-full bg-primary-400" />
+          <div className="flex items-center gap-3 text-xs flex-wrap">
+            <div className="flex items-center gap-1.5 whitespace-nowrap">
+              <div className="w-3 h-3 rounded-full bg-primary-400 shrink-0" />
               <span className="text-dark-400">Votre score</span>
             </div>
             {competitorName && (
-              <div className="flex items-center gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-orange-400" />
-                <span className="text-dark-400">{competitorName}</span>
+              <div className="flex items-center gap-1.5 min-w-0">
+                <div className="w-3 h-3 rounded-full bg-orange-400 shrink-0" />
+                <span className="text-dark-400 truncate max-w-[120px]">{competitorName}</span>
               </div>
             )}
           </div>
@@ -54,7 +54,7 @@ export function ScoreHistoryChart({ data, competitorName }: ScoreHistoryChartPro
 
         {hasData ? (
           <ResponsiveContainer width="100%" height={200}>
-            <LineChart data={formattedData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
+            <LineChart data={formattedData} margin={{ top: 5, right: 8, left: -12, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
               <XAxis
                 dataKey="date"

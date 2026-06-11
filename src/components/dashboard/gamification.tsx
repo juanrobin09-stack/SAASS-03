@@ -46,17 +46,17 @@ export function Gamification({ xpPoints, badges = [] }: GamificationProps) {
         {/* Level */}
         <div className="bg-dark-800/50 rounded-xl p-4 mb-5">
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${levelColors[levelInfo.level]} flex items-center justify-center`}>
+            <div className="flex items-center gap-2 min-w-0">
+              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${levelColors[levelInfo.level]} flex items-center justify-center flex-shrink-0`}>
                 <span className="text-white text-xs font-bold">{levelInfo.level}</span>
               </div>
-              <div>
+              <div className="min-w-0">
                 <p className="text-white font-semibold text-sm">Niveau {levelInfo.level}</p>
-                <p className="text-dark-400 text-xs">{levelInfo.name}</p>
+                <p className="text-dark-400 text-xs truncate">{levelInfo.name}</p>
               </div>
             </div>
-            <div className="flex items-center gap-1 text-yellow-400">
-              <Zap className="w-4 h-4" />
+            <div className="flex items-center gap-1 text-yellow-400 flex-shrink-0 whitespace-nowrap">
+              <Zap className="w-4 h-4 shrink-0" />
               <span className="font-bold text-sm">{xpPoints} XP</span>
             </div>
           </div>
@@ -95,7 +95,7 @@ export function Gamification({ xpPoints, badges = [] }: GamificationProps) {
                   >
                     {badge.icon}
                   </div>
-                  <span className="hidden sm:block text-dark-500 text-xs text-center leading-tight">{badge.name}</span>
+                  <span className="hidden sm:block text-dark-500 text-xs text-center leading-tight line-clamp-2">{badge.name}</span>
                 </motion.div>
               ))}
             </div>

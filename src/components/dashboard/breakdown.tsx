@@ -41,8 +41,8 @@ export function ScoreBreakdownCard({ breakdown }: BreakdownProps) {
                   <div className={`w-7 h-7 rounded-lg bg-gradient-to-br ${item.color} flex items-center justify-center text-white`}>
                     {item.icon}
                   </div>
-                  <span className="text-dark-300 text-sm flex-1">{item.label}</span>
-                  <div className="flex items-baseline gap-0.5">
+                  <span className="text-dark-300 text-sm flex-1 truncate">{item.label}</span>
+                  <div className="flex items-baseline gap-0.5 flex-shrink-0 whitespace-nowrap">
                     <span className={`font-bold text-sm ${percentage >= 80 ? 'text-accent-400' : percentage >= 50 ? 'text-yellow-400' : 'text-red-400'}`}>
                       {value}
                     </span>

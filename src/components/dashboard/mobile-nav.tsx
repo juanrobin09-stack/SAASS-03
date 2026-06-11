@@ -17,7 +17,10 @@ export function MobileNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-dark-900/95 backdrop-blur-xl border-t border-dark-800/80">
+    <nav
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-dark-900/95 backdrop-blur-xl border-t border-dark-800/80"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+    >
       <div className="grid grid-cols-5">
         {mobileNavItems.map((item) => {
           const isActive = pathname === item.href
@@ -27,12 +30,12 @@ export function MobileNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                'flex flex-col items-center justify-center gap-1 py-3 transition-colors',
+                'flex flex-col items-center justify-center gap-1 py-2.5 min-h-[56px] transition-colors',
                 isActive ? 'text-primary-400' : 'text-dark-500'
               )}
             >
-              <Icon size={19} />
-              <span className="text-[9px] font-medium leading-none">{item.label}</span>
+              <Icon size={20} className="shrink-0" />
+              <span className="text-[10px] font-medium leading-none truncate max-w-full px-0.5">{item.label}</span>
             </Link>
           )
         })}
