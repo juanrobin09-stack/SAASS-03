@@ -18,9 +18,9 @@ export function ScoreCard({ score, previousScore, competitorScore, competitorNam
   const competitorGap = competitorScore ? competitorScore - score : null
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-      {/* Main Score */}
-      <div className="sm:col-span-1">
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+      {/* Main Score — full width on mobile */}
+      <div className="col-span-2 sm:col-span-1">
         <Card glow className="h-full">
           <CardContent className="flex flex-col items-center justify-center py-4 sm:py-8">
             <p className="text-dark-400 text-sm mb-3">Votre Score Local</p>

@@ -3,7 +3,8 @@
 import { motion } from 'framer-motion'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { TrendingUp, MapPin, RefreshCw } from 'lucide-react'
+import Link from 'next/link'
+import { TrendingUp, MapPin, RefreshCw, AlertCircle } from 'lucide-react'
 import { ScoreCard } from '@/components/dashboard/score-card'
 import { WeeklyMissions } from '@/components/dashboard/weekly-missions'
 import { AICoach } from '@/components/dashboard/ai-coach'
@@ -39,11 +40,28 @@ export function DashboardClient({
   const router = useRouter()
   const [showUpgradeSuccess, setShowUpgradeSuccess] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+  const [rescanError, setRescanError] = useState<string | null>(null)
+  const [needsUpgrade, setNeedsUpgrade] = useState(false)
 
   const handleRefresh = async () => {
     setRefreshing(true)
-    router.refresh()
-    setTimeout(() => setRefreshing(false), 1500)
+    setRescanError(null)
+    setNeedsUpgrade(false)
+    try {
+      const res = await fetch('/api/rescan', { method: 'POST' })
+      const data = await res.json()
+      if (res.ok) {
+        router.refresh()
+        setTimeout(() => setRefreshing(false), 1200)
+      } else {
+        if (data.upgrade) setNeedsUpgrade(true)
+        else setRescanError(data.error ?? 'Analyse impossible. Réessayez.')
+        setRefreshing(false)
+      }
+    } catch {
+      setRescanError('Connexion impossible. Réessayez.')
+      setRefreshing(false)
+    }
   }
 
   useEffect(() => {
@@ -61,22 +79,37 @@ export function DashboardClient({
   const weekLabel = `Semaine ${getWeekNumber(now)} • ${now.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}`
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       {/* Upgrade success */}
       {showUpgradeSuccess && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          className="mb-6 p-4 bg-accent-500/10 border border-accent-500/20 rounded-xl flex items-center gap-3"
+          className="mb-4 sm:mb-6 p-4 bg-accent-500/10 border border-accent-500/20 rounded-xl flex items-center gap-3"
         >
-          <TrendingUp className="w-5 h-5 text-accent-400" />
-          <p className="text-accent-300 font-medium">Paiement reçu — activation du plan Pro en cours...</p>
+          <TrendingUp className="w-5 h-5 text-accent-400 shrink-0" />
+          <p className="text-accent-300 font-medium text-sm sm:text-base">Paiement reçu — activation du plan Pro en cours...</p>
         </motion.div>
       )}
 
+      {/* Re-scan feedback */}
+      {(rescanError || needsUpgrade) && (
+        <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3">
+          <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
+          {needsUpgrade ? (
+            <p className="text-red-300 text-sm flex-1">
+              Le re-scan à la demande est réservé au plan Pro.{' '}
+              <Link href="/dashboard/parametres" className="underline font-semibold text-white">Passer au Pro</Link>
+            </p>
+          ) : (
+            <p className="text-red-300 text-sm flex-1">{rescanError}</p>
+          )}
+        </div>
+      )}
+
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 sm:mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-8">
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <MapPin className="w-4 h-4 text-primary-400 shrink-0" />
@@ -100,16 +133,16 @@ export function DashboardClient({
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="flex items-center gap-2 px-3 py-2 min-h-[40px] bg-dark-800 hover:bg-dark-700 border border-dark-700 rounded-lg text-dark-400 hover:text-white text-sm transition-all disabled:opacity-50"
+            className="flex items-center justify-center gap-2 px-4 py-2 min-h-[40px] bg-dark-800 hover:bg-dark-700 border border-dark-700 rounded-lg text-dark-300 hover:text-white text-sm font-medium transition-all disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 shrink-0 ${refreshing ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">Nouvelle analyse</span>
+            <span>{refreshing ? 'Analyse en cours…' : 'Nouvelle analyse'}</span>
           </button>
         </div>
       </div>
 
       {/* Score cards - top */}
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-4 sm:mb-6">
         <ScoreCard
           score={analysis.score}
           previousScore={analysis.previousScore}
@@ -119,43 +152,59 @@ export function DashboardClient({
         />
       </motion.div>
 
-      {/* Main grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left column */}
-        <div className="lg:col-span-2 space-y-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-            <AICoach
-              message={analysis.coachMessage}
-              priorityAction={analysis.priorityAction}
-              score={analysis.score}
-              delta={analysis.scoreDelta}
-              businessName={business.name}
-            />
-          </motion.div>
+      {/*
+        Main grid. Mobile = single column, ordered by usefulness:
+        Coach → Missions → Alerts → Breakdown → Gamification → History.
+        Desktop = 2/1 columns filling cleanly (span2 + span1 per row).
+      */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="order-1 lg:order-1 lg:col-span-2"
+        >
+          <AICoach
+            message={analysis.coachMessage}
+            priorityAction={analysis.priorityAction}
+            score={analysis.score}
+            delta={analysis.scoreDelta}
+            businessName={business.name}
+          />
+        </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-            <WeeklyMissions tasks={tasks} weekOf={weekLabel} />
-          </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+          className="order-2 lg:order-3 lg:col-span-2"
+        >
+          <WeeklyMissions tasks={tasks} weekOf={weekLabel} />
+        </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <ScoreHistoryChart data={scoreHistory} competitorName={competitor?.name} />
-          </motion.div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+          className="order-3 lg:order-2 lg:col-span-1"
+        >
+          <Alerts alerts={alerts} />
+        </motion.div>
 
-        {/* Right column */}
-        <div className="space-y-6">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-            <ScoreBreakdownCard breakdown={analysis.breakdown} />
-          </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
+          className="order-4 lg:order-4 lg:col-span-1"
+        >
+          <ScoreBreakdownCard breakdown={analysis.breakdown} />
+        </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-            <Gamification xpPoints={analysis.xpPoints} badges={badges} />
-          </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+          className="order-5 lg:order-6 lg:col-span-1"
+        >
+          <Gamification xpPoints={analysis.xpPoints} badges={badges} />
+        </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-            <Alerts alerts={alerts} />
-          </motion.div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}
+          className="order-6 lg:order-5 lg:col-span-2"
+        >
+          <ScoreHistoryChart data={scoreHistory} competitorName={competitor?.name} />
+        </motion.div>
       </div>
     </div>
   )
