@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server'
 import { auth } from '@clerk/nextjs/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
+import { awardBadges } from '@/lib/badges'
 
 const schema = z.object({
   taskId: z.string(),
@@ -37,7 +38,10 @@ export async function PATCH(req: Request) {
       },
     })
 
-    return NextResponse.json({ success: true })
+    // Completing tasks can unlock task-count badges
+    const newBadges = completed ? await awardBadges(user.id) : []
+
+    return NextResponse.json({ success: true, newBadges })
   } catch (error) {
     if (error instanceof z.ZodError) return NextResponse.json({ error: 'Données invalides' }, { status: 400 })
     return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })

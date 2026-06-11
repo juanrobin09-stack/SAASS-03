@@ -8,6 +8,7 @@ import {
 } from './score'
 import { generateCoachMessage } from './ai'
 import { searchBusiness, searchNearbyCompetitors } from './google-places'
+import { awardBadges } from './badges'
 
 export interface ScanResult {
   businessId: string
@@ -205,6 +206,9 @@ export async function runWeeklyScan(business: Business): Promise<ScanResult | nu
       data: { businessId: business.id, title: task.title, description: task.description || '', category: task.category, impact: task.impact, weekOf },
     })
   }
+
+  // Award any newly earned badges (idempotent)
+  await awardBadges(business.userId)
 
   return { businessId: business.id, score, scoreDelta, dataSource }
 }

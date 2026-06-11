@@ -14,6 +14,7 @@ import {
 } from '@/lib/score'
 import { generateCoachMessage } from '@/lib/ai'
 import { searchBusiness, searchNearbyCompetitors } from '@/lib/google-places'
+import { awardBadges } from '@/lib/badges'
 
 const schema = z.object({
   businessName: z.string().min(2),
@@ -271,6 +272,9 @@ export async function POST(req: Request) {
         },
       })
     }
+
+    // Award any newly earned badges (idempotent)
+    await awardBadges(user.id)
 
     return NextResponse.json({
       analysisId: analysis.id, businessId: business.id,
