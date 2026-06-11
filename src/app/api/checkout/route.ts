@@ -20,11 +20,15 @@ export async function POST(req: Request) {
     const { plan } = schema.parse(await req.json())
     const priceId = process.env.STRIPE_PRO_PRICE_ID
 
-    if (!priceId) return NextResponse.json({ error: 'Plan non configuré' }, { status: 500 })
+    if (!priceId || priceId.startsWith('price_pro_placeholder')) {
+      return NextResponse.json({ error: 'Stripe non configuré — contactez le support.' }, { status: 500 })
+    }
 
     const session = await createCheckoutSession(user.id, priceId, user.stripeCustomerId ?? undefined)
     return NextResponse.json({ url: session.url })
-  } catch {
-    return NextResponse.json({ error: 'Erreur serveur' }, { status: 500 })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Erreur serveur'
+    console.error('[checkout]', message)
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
