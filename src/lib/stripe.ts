@@ -45,8 +45,7 @@ export const PLANS = {
 
 export async function createCheckoutSession(userId: string, priceId: string, customerId?: string) {
   const session = await stripe.checkout.sessions.create({
-    customer: customerId,
-    customer_creation: customerId ? undefined : 'always',
+    ...(customerId ? { customer: customerId } : {}),
     line_items: [{ price: priceId, quantity: 1 }],
     mode: 'subscription',
     success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?upgrade=success`,
