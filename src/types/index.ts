@@ -90,6 +90,23 @@ export interface OnboardingData {
   competitorName?: string
 }
 
+export interface CoachSection {
+  id: string
+  title: string
+  content: string
+  insight?: string
+  actions?: string[]
+  priority: 'critical' | 'high' | 'medium' | 'low'
+  score?: number
+}
+
+export interface CoachReport {
+  summary: string
+  priorityAction: string
+  sections: CoachSection[]
+  generatedAt?: string
+}
+
 export type PlanType = 'FREE' | 'PRO' | 'BUSINESS'
 
 export interface PricingPlan {

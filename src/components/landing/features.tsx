@@ -27,13 +27,13 @@ const features = [
   },
   {
     icon: Brain,
-    title: 'Coach IA Personnalisé',
-    description: "Votre coach analyse vos faiblesses et vous dit exactement quelle action prioriser cette semaine. Zéro générique.",
+    title: 'Expert Marketing IA',
+    description: 'Un rapport de consultant en 9 sections personnalisées chaque semaine : avis, photos, concurrent, plan 30 jours, potentiel de croissance.',
     accent: 'from-violet-500/15 to-violet-600/5',
     border: 'border-violet-500/15 hover:border-violet-500/30',
     iconBg: 'bg-violet-600',
-    stat: 'IA',
-    statLabel: 'analyse sur mesure',
+    stat: '9',
+    statLabel: 'sections premium',
   },
   {
     icon: Zap,

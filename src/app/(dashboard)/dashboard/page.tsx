@@ -52,6 +52,7 @@ export default async function DashboardPage() {
         breakdown: weekInsights?.breakdown ?? { reviews: 0, photos: 0, googleProfile: 0, posts: 0, engagement: 0, website: 0 },
         coachMessage: latestAnalysis.coachMessage ?? '',
         priorityAction: latestAnalysis.priorityAction ?? '',
+        coachReport: (weekInsights?.coachReport ?? null) as import('@/types').CoachReport | null,
         xpPoints: latestAnalysis.xpPoints,
       }}
       competitor={competitor ? { name: competitor.name, score: competitor.score ?? 0, scoreDiff: (competitor.score ?? 0) - latestAnalysis.score } : null}

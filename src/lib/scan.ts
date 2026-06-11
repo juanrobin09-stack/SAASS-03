@@ -145,7 +145,7 @@ export async function runWeeklyScan(business: Business): Promise<ScanResult | nu
     reviews: 'Avis Google', photos: 'Photos', googleProfile: 'Fiche Google', posts: 'Publications Google',
   }
 
-  const { message: coachMessage, priorityAction } = await generateCoachMessage({
+  const coachReport = await generateCoachMessage({
     businessName: business.name,
     category: business.category,
     score,
@@ -159,6 +159,8 @@ export async function runWeeklyScan(business: Business): Promise<ScanResult | nu
     responseRate: businessData.responseRate,
     priorityWeakness: weaknessLabels[priorityWeakness.key],
   })
+  const coachMessage = coachReport.summary
+  const priorityAction = coachReport.priorityAction
 
   // — 4. Tasks + alerts —
   const tasks = generateWeeklyTasks(score, businessData)
@@ -192,7 +194,7 @@ export async function runWeeklyScan(business: Business): Promise<ScanResult | nu
       responseRate: businessData.responseRate,
       competitorScore: competitor?.score, competitorName: competitor?.name, scoreDiff: competitor?.scoreDiff,
       coachMessage, priorityAction, xpPoints: totalXp,
-      weekInsights: { breakdown, dataSource } as any,
+      weekInsights: { breakdown, dataSource, coachReport } as any,
     },
   })
 

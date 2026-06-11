@@ -13,7 +13,7 @@ import { Alerts } from '@/components/dashboard/alerts'
 import { Gamification } from '@/components/dashboard/gamification'
 import { ScoreBreakdownCard } from '@/components/dashboard/breakdown'
 import { Badge } from '@/components/ui/badge'
-import type { ScoreBreakdown, WeekTask, AlertItem, ScoreHistory } from '@/types'
+import type { ScoreBreakdown, WeekTask, AlertItem, ScoreHistory, CoachReport } from '@/types'
 
 interface DashboardClientProps {
   business: { id: string; name: string; city: string; category: string }
@@ -24,6 +24,7 @@ interface DashboardClientProps {
     breakdown: ScoreBreakdown
     coachMessage: string
     priorityAction: string
+    coachReport: CoachReport | null
     xpPoints: number
   }
   competitor: { name: string; score: number; scoreDiff: number } | null
@@ -67,7 +68,6 @@ export function DashboardClient({
   useEffect(() => {
     if (searchParams.get('upgrade') === 'success') {
       setShowUpgradeSuccess(true)
-      // Webhook may not have fired yet — refresh server data after 3s then again at 7s
       const t1 = setTimeout(() => router.refresh(), 3000)
       const t2 = setTimeout(() => router.refresh(), 7000)
       const t3 = setTimeout(() => setShowUpgradeSuccess(false), 10000)
@@ -165,6 +165,7 @@ export function DashboardClient({
           <AICoach
             message={analysis.coachMessage}
             priorityAction={analysis.priorityAction}
+            coachReport={analysis.coachReport}
             score={analysis.score}
             delta={analysis.scoreDelta}
             businessName={business.name}

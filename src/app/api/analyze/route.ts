@@ -198,7 +198,7 @@ export async function POST(req: Request) {
       reviews: 'Avis Google', photos: 'Photos', googleProfile: 'Fiche Google', posts: 'Publications Google',
     }
 
-    const { message: coachMessage, priorityAction } = await generateCoachMessage({
+    const coachReport = await generateCoachMessage({
       businessName: data.businessName,
       category: data.category,
       score,
@@ -212,6 +212,8 @@ export async function POST(req: Request) {
       responseRate: businessData.responseRate,
       priorityWeakness: weaknessLabels[priorityWeakness.key],
     })
+    const coachMessage = coachReport.summary
+    const priorityAction = coachReport.priorityAction
 
     const tasks = generateWeeklyTasks(score, businessData)
     const alerts = generateAlerts({
@@ -252,7 +254,7 @@ export async function POST(req: Request) {
         competitorScore: competitor?.score, competitorName: competitor?.name,
         scoreDiff: competitor?.scoreDiff,
         coachMessage, priorityAction, xpPoints: totalXp,
-        weekInsights: { breakdown, dataSource } as any,
+        weekInsights: { breakdown, dataSource, coachReport } as any,
       },
     })
 

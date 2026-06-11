@@ -1,6 +1,7 @@
 import { Navbar } from '@/components/landing/navbar'
 import { Hero } from '@/components/landing/hero'
 import { Features } from '@/components/landing/features'
+import { ExpertMarketing } from '@/components/landing/expert-marketing'
 import { HowItWorks } from '@/components/landing/how-it-works'
 import { Pricing } from '@/components/landing/pricing'
 import { FAQ } from '@/components/landing/faq'
@@ -14,6 +15,7 @@ export default function LandingPage() {
       <Navbar />
       <Hero />
       <Features />
+      <ExpertMarketing />
       <HowItWorks />
 
       {/* Value proof section — honest, no fake names */}
