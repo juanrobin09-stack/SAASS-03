@@ -42,15 +42,20 @@ export function DashboardClient({
 
   const handleRefresh = async () => {
     setRefreshing(true)
-    router.push('/onboarding')
+    router.refresh()
+    setTimeout(() => setRefreshing(false), 1500)
   }
 
   useEffect(() => {
     if (searchParams.get('upgrade') === 'success') {
       setShowUpgradeSuccess(true)
-      setTimeout(() => setShowUpgradeSuccess(false), 5000)
+      // Webhook may not have fired yet — refresh server data after 3s then again at 7s
+      const t1 = setTimeout(() => router.refresh(), 3000)
+      const t2 = setTimeout(() => router.refresh(), 7000)
+      const t3 = setTimeout(() => setShowUpgradeSuccess(false), 10000)
+      return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
     }
-  }, [searchParams])
+  }, [searchParams, router])
 
   const now = new Date()
   const weekLabel = `Semaine ${getWeekNumber(now)} • ${now.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}`
@@ -66,7 +71,7 @@ export function DashboardClient({
           className="mb-6 p-4 bg-accent-500/10 border border-accent-500/20 rounded-xl flex items-center gap-3"
         >
           <TrendingUp className="w-5 h-5 text-accent-400" />
-          <p className="text-accent-300 font-medium">Plan mis à niveau avec succès ! Bienvenue sur le plan Pro.</p>
+          <p className="text-accent-300 font-medium">Paiement reçu — activation du plan Pro en cours...</p>
         </motion.div>
       )}
 

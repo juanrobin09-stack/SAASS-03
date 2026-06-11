@@ -49,21 +49,30 @@ export async function POST(req: Request) {
     case 'invoice.payment_succeeded': {
       const invoice = event.data.object as Stripe.Invoice
       const subscriptionId = invoice.subscription as string
+      const customerId = invoice.customer as string
       if (!subscriptionId) break
 
       const subscription = await stripe.subscriptions.retrieve(subscriptionId)
       const priceId = subscription.items.data[0].price.id
       const plan = getPlanFromPriceId(priceId) ?? 'PRO'
+      const data = {
+        plan,
+        stripePriceId: priceId,
+        stripeCurrentPeriodEnd: new Date(subscription.current_period_end * 1000),
+      }
 
-      // Update plan + renewal date on every successful payment (handles re-subscriptions too)
-      await prisma.user.updateMany({
+      // Try by subscriptionId first (renewals); fall back to customerId (race: first payment
+      // may arrive before checkout.session.completed sets stripeSubscriptionId)
+      const bySubscription = await prisma.user.updateMany({
         where: { stripeSubscriptionId: subscriptionId },
-        data: {
-          plan,
-          stripePriceId: priceId,
-          stripeCurrentPeriodEnd: new Date(subscription.current_period_end * 1000),
-        },
+        data,
       })
+      if (bySubscription.count === 0 && customerId) {
+        await prisma.user.updateMany({
+          where: { stripeCustomerId: customerId },
+          data: { ...data, stripeSubscriptionId: subscriptionId },
+        })
+      }
       break
     }
 
