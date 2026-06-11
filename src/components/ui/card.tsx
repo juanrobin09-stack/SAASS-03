@@ -23,16 +23,16 @@ export function Card({ children, className, glow, hover }: CardProps) {
 }
 
 export function CardHeader({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn('p-6 pb-0', className)}>{children}</div>
+  return <div className={cn('p-4 pb-0 sm:p-6 sm:pb-0', className)}>{children}</div>
 }
 
 export function CardContent({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <div className={cn('p-6', className)}>{children}</div>
+  return <div className={cn('p-4 sm:p-6', className)}>{children}</div>
 }
 
 export function CardFooter({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={cn('px-6 py-4 border-t border-dark-800', className)}>
+    <div className={cn('px-4 py-3 sm:px-6 sm:py-4 border-t border-dark-800', className)}>
       {children}
     </div>
   )

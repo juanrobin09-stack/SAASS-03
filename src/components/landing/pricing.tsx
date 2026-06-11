@@ -56,9 +56,11 @@ export function Pricing() {
   const isInView = useInView(ref, { once: true, margin: '-80px' })
   const { isSignedIn, isLoaded } = useAuth()
   const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
   const handleProCheckout = async () => {
     setCheckoutLoading(true)
+    setCheckoutError(null)
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
@@ -68,14 +70,18 @@ export function Pricing() {
       const data = await res.json()
       if (data.url) {
         window.location.href = data.url
+      } else {
+        setCheckoutError(data.error ?? 'Erreur lors du paiement. Réessayez.')
+        setCheckoutLoading(false)
       }
     } catch {
+      setCheckoutError('Impossible de contacter le serveur. Vérifiez votre connexion.')
       setCheckoutLoading(false)
     }
   }
 
   return (
-    <section id="tarifs" className="py-20 sm:py-32 relative overflow-hidden" ref={ref}>
+    <section id="tarifs" className="py-32 relative overflow-hidden" ref={ref}>
       <div className="absolute inset-0 bg-dark-950" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-primary-600/5 rounded-full blur-[100px] pointer-events-none" />
 
@@ -139,17 +145,22 @@ export function Pricing() {
                 {/* CTA — auth-aware for Pro plan */}
                 <div className="mb-7">
                   {isLoaded && isSignedIn && plan.isPro ? (
-                    <Button
-                      variant="primary"
-                      className="w-full shadow-glow"
-                      size="lg"
-                      onClick={handleProCheckout}
-                      loading={checkoutLoading}
-                    >
-                      <Zap className="w-4 h-4" />
-                      {plan.cta}
-                      <ArrowRight className="w-4 h-4" />
-                    </Button>
+                    <div className="space-y-2">
+                      <Button
+                        variant="primary"
+                        className="w-full shadow-glow"
+                        size="lg"
+                        onClick={handleProCheckout}
+                        loading={checkoutLoading}
+                      >
+                        <Zap className="w-4 h-4" />
+                        {plan.cta}
+                        <ArrowRight className="w-4 h-4" />
+                      </Button>
+                      {checkoutError && (
+                        <p className="text-red-400 text-xs text-center">{checkoutError}</p>
+                      )}
+                    </div>
                   ) : (
                     <Link href={plan.href} className="block">
                       <Button

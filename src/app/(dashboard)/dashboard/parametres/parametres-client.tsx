@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useClerk } from '@clerk/nextjs'
-import { Settings, Crown, CreditCard, ExternalLink, User, Trash2, Check, AlertCircle } from 'lucide-react'
+import { Crown, CreditCard, ExternalLink, User, Trash2, Check, AlertCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -30,9 +30,11 @@ export function ParametresClient({ user }: ParametresClientProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [portalLoading, setPortalLoading] = useState(false)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
+  const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
   const handleUpgrade = async () => {
     setCheckoutLoading(true)
+    setCheckoutError(null)
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
@@ -40,9 +42,14 @@ export function ParametresClient({ user }: ParametresClientProps) {
         body: JSON.stringify({ plan: 'PRO' }),
       })
       const data = await res.json()
-      if (data.url) window.location.href = data.url
-      else setCheckoutLoading(false)
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        setCheckoutError(data.error ?? 'Erreur lors du paiement. Réessayez.')
+        setCheckoutLoading(false)
+      }
     } catch {
+      setCheckoutError('Impossible de contacter le serveur. Vérifiez votre connexion.')
       setCheckoutLoading(false)
     }
   }
@@ -148,7 +155,10 @@ export function ParametresClient({ user }: ParametresClientProps) {
                 {user.periodEnd && <p className="text-dark-400 text-sm">Renouvellement le {formatDate(user.periodEnd)}</p>}
               </div>
               {user.plan === 'FREE' ? (
-                <Button size="sm" onClick={handleUpgrade} loading={checkoutLoading}>Passer au Pro</Button>
+                <div className="space-y-1">
+                  <Button size="sm" onClick={handleUpgrade} loading={checkoutLoading}>Passer au Pro</Button>
+                  {checkoutError && <p className="text-red-400 text-xs">{checkoutError}</p>}
+                </div>
               ) : user.hasStripe ? (
                 <Button variant="secondary" size="sm" loading={portalLoading} onClick={handleManageBilling}>
                   <CreditCard className="w-4 h-4" />Gérer la facturation<ExternalLink className="w-3 h-3" />
@@ -165,6 +175,7 @@ export function ParametresClient({ user }: ParametresClientProps) {
                   <li>• Export PDF premium</li>
                 </ul>
                 <Button className="w-full" size="sm" onClick={handleUpgrade} loading={checkoutLoading}>Passer au Pro — 19€/mois</Button>
+                {checkoutError && <p className="text-red-400 text-xs mt-2 text-center">{checkoutError}</p>}
               </div>
             )}
           </CardContent>

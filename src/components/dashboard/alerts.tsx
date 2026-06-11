@@ -69,7 +69,7 @@ export function Alerts({ alerts, onDismiss }: AlertsProps) {
                       </div>
                       <button
                         onClick={() => handleDismiss(alert.id)}
-                        className="flex-shrink-0 text-current opacity-50 hover:opacity-100 transition-opacity"
+                        className="flex-shrink-0 text-current opacity-50 hover:opacity-100 transition-opacity p-2 -m-1"
                       >
                         <X className="w-4 h-4" />
                       </button>
