@@ -2,7 +2,6 @@ import { SignIn } from '@clerk/nextjs'
 import Link from 'next/link'
 import { CheckCircle } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
-import { clerkAppearance } from '@/lib/clerk-appearance'
 
 export default function LoginPage() {
   return (
@@ -50,7 +49,6 @@ export default function LoginPage() {
           <SignIn
             fallbackRedirectUrl="/dashboard"
             signUpUrl="/register"
-            appearance={clerkAppearance}
           />
         </div>
       </div>

@@ -1,7 +1,6 @@
 import { SignUp } from '@clerk/nextjs'
 import { Check } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
-import { clerkAppearance } from '@/lib/clerk-appearance'
 
 const benefits = [
   'Score Local IA calculé en 60 secondes',
@@ -54,7 +53,6 @@ export default function RegisterPage() {
           <SignUp
             fallbackRedirectUrl="/onboarding"
             signInUrl="/login"
-            appearance={clerkAppearance}
           />
         </div>
       </div>
