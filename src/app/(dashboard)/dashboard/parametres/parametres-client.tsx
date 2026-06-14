@@ -30,6 +30,7 @@ export function ParametresClient({ user }: ParametresClientProps) {
   const [deleteError, setDeleteError] = useState<string | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [portalLoading, setPortalLoading] = useState(false)
+  const [portalError, setPortalError] = useState<string | null>(null)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
   const [checkoutError, setCheckoutError] = useState<string | null>(null)
 
@@ -89,10 +90,19 @@ export function ParametresClient({ user }: ParametresClientProps) {
 
   const handleManageBilling = async () => {
     setPortalLoading(true)
-    const res = await fetch('/api/portal', { method: 'POST' })
-    const data = await res.json()
-    if (data.url) window.location.href = data.url
-    else setPortalLoading(false)
+    setPortalError(null)
+    try {
+      const res = await fetch('/api/portal', { method: 'POST' })
+      const data = await res.json()
+      if (data.url) window.location.href = data.url
+      else {
+        setPortalError(data.error ?? 'Impossible d\'ouvrir le portail. Réessayez.')
+        setPortalLoading(false)
+      }
+    } catch {
+      setPortalError('Connexion impossible. Vérifiez votre réseau.')
+      setPortalLoading(false)
+    }
   }
 
   return (
@@ -167,9 +177,13 @@ export function ParametresClient({ user }: ParametresClientProps) {
                   {checkoutError && <p className="text-red-400 text-xs">{checkoutError}</p>}
                 </div>
               ) : user.hasStripe ? (
-                <Button variant="secondary" size="sm" loading={portalLoading} onClick={handleManageBilling}>
-                  <CreditCard className="w-4 h-4" />Gérer la facturation<ExternalLink className="w-3 h-3" />
-                </Button>
+                <div className="space-y-1.5 text-right">
+                  <Button variant="secondary" size="sm" loading={portalLoading} onClick={handleManageBilling}>
+                    <CreditCard className="w-4 h-4" />Gérer l'abonnement<ExternalLink className="w-3 h-3" />
+                  </Button>
+                  <p className="text-dark-500 text-xs">Modifier, suspendre ou annuler depuis le portail</p>
+                  {portalError && <p className="text-red-400 text-xs">{portalError}</p>}
+                </div>
               ) : null}
             </div>
             {user.plan === 'FREE' && (
