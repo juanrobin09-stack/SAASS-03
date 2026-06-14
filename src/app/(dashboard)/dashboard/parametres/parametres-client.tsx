@@ -184,7 +184,11 @@ export function ParametresClient({ user }: ParametresClientProps) {
                   <p className="text-dark-500 text-xs">Modifier, suspendre ou annuler depuis le portail</p>
                   {portalError && <p className="text-red-400 text-xs">{portalError}</p>}
                 </div>
-              ) : null}
+              ) : (
+                <span className="inline-flex items-center gap-1.5 text-xs text-dark-400 bg-dark-800/60 border border-dark-700 rounded-full px-3 py-1.5 whitespace-nowrap">
+                  <Crown className="w-3.5 h-3.5 text-yellow-400" /> Accès accordé manuellement
+                </span>
+              )}
             </div>
             {user.plan === 'FREE' && (
               <div className="bg-primary-500/5 border border-primary-500/20 rounded-xl p-4">
