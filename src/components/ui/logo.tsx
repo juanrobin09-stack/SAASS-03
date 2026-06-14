@@ -4,56 +4,40 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { cn } from '@/lib/utils'
 
-interface LogoMarkProps {
-  size?: number
-  className?: string
-}
-
-export function LogoMark({ size = 32, className }: LogoMarkProps) {
-  return (
-    <span
-      className={cn(
-        'flex items-center justify-center rounded-xl shrink-0 overflow-hidden',
-        'bg-gradient-to-br from-primary-500 to-accent-400',
-        className,
-      )}
-      style={{ width: size, height: size }}
-    >
-      <Image
-        src="/logo.png"
-        alt=""
-        width={size}
-        height={size}
-        className="w-full h-full object-contain"
-        style={{ mixBlendMode: 'multiply' }}
-        priority
-      />
-    </span>
-  )
-}
-
 interface LogoProps {
   href?: string
   size?: 'sm' | 'md' | 'lg'
   className?: string
-  showText?: boolean
 }
 
-export function Logo({ href = '/', size = 'md', className, showText = true }: LogoProps) {
-  const sizes = {
-    sm: { mark: 28, text: 'text-base' },
-    md: { mark: 34, text: 'text-lg' },
-    lg: { mark: 42, text: 'text-xl' },
-  }
+// Keep LogoMark for any code that imports it
+export function LogoMark({ size = 32, className }: { size?: number; className?: string }) {
+  return (
+    <Image
+      src="/logo-full.jpg"
+      alt="LocalScore.ai"
+      width={size * 2.7}
+      height={size}
+      className={cn('object-contain', className)}
+      priority
+    />
+  )
+}
+
+export function Logo({ href = '/', size = 'md', className }: LogoProps) {
+  const heights: Record<string, number> = { sm: 26, md: 32, lg: 40 }
+  const h = heights[size]
 
   const content = (
-    <span className={cn('flex items-center gap-2.5 group', className)}>
-      <LogoMark size={sizes[size].mark} />
-      {showText && (
-        <span className={cn('font-extrabold text-white tracking-tight', sizes[size].text)}>
-          LocalScore<span className="text-primary-400 font-semibold">.ai</span>
-        </span>
-      )}
+    <span className={cn('flex items-center shrink-0', className)}>
+      <Image
+        src="/logo-full.jpg"
+        alt="LocalScore.ai"
+        width={Math.round(h * 2.67)}
+        height={h}
+        className="object-contain"
+        priority
+      />
     </span>
   )
 
