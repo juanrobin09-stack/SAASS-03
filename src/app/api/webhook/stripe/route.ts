@@ -100,18 +100,28 @@ export async function POST(req: Request) {
 
     case 'customer.subscription.updated': {
       const subscription = event.data.object as Stripe.Subscription
+      const customerId = subscription.customer as string
       const priceId = subscription.items.data[0].price.id
       const plan = getPlanFromPriceId(priceId)
 
       if (subscription.status === 'active' && plan) {
-        await prisma.user.updateMany({
+        const data = {
+          plan,
+          stripePriceId: priceId,
+          stripeCurrentPeriodEnd: new Date(subscription.current_period_end * 1000),
+        }
+        // Match by subscriptionId first; fall back to customerId if checkout.session.completed
+        // hasn't linked the subscription yet (out-of-order delivery)
+        const bySubscription = await prisma.user.updateMany({
           where: { stripeSubscriptionId: subscription.id },
-          data: {
-            plan,
-            stripePriceId: priceId,
-            stripeCurrentPeriodEnd: new Date(subscription.current_period_end * 1000),
-          },
+          data,
         })
+        if (bySubscription.count === 0 && customerId) {
+          await prisma.user.updateMany({
+            where: { stripeCustomerId: customerId },
+            data: { ...data, stripeSubscriptionId: subscription.id },
+          })
+        }
       } else if (subscription.status === 'canceled' || subscription.status === 'unpaid') {
         // Subscription cancelled mid-period or payment failed → downgrade immediately
         await prisma.user.updateMany({

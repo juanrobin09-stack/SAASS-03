@@ -27,6 +27,7 @@ export function ParametresClient({ user }: ParametresClientProps) {
 
   const [deleteConfirm, setDeleteConfirm] = useState('')
   const [deleteLoading, setDeleteLoading] = useState(false)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [portalLoading, setPortalLoading] = useState(false)
   const [checkoutLoading, setCheckoutLoading] = useState(false)
@@ -71,12 +72,18 @@ export function ParametresClient({ user }: ParametresClientProps) {
   const handleDeleteAccount = async () => {
     if (deleteConfirm !== user.email) return
     setDeleteLoading(true)
-    const res = await fetch('/api/account/delete', { method: 'DELETE' })
-    if (res.ok) {
-      await signOut({ redirectUrl: '/' })
-    } else {
+    setDeleteError(null)
+    try {
+      const res = await fetch('/api/account/delete', { method: 'DELETE' })
+      if (res.ok) {
+        await signOut({ redirectUrl: '/' })
+      } else {
+        setDeleteLoading(false)
+        setDeleteError('Erreur lors de la suppression. Réessayez ou contactez le support.')
+      }
+    } catch {
       setDeleteLoading(false)
-      alert('Erreur lors de la suppression')
+      setDeleteError('Connexion impossible. Vérifiez votre réseau et réessayez.')
     }
   }
 
@@ -209,6 +216,12 @@ export function ParametresClient({ user }: ParametresClientProps) {
                     Confirmer la suppression
                   </Button>
                 </div>
+                {deleteError && (
+                  <p className="text-sm text-red-400 flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                    <span className="break-words">{deleteError}</span>
+                  </p>
+                )}
               </div>
             )}
           </CardContent>

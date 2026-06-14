@@ -53,6 +53,17 @@ export default function OnboardingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<{ message: string; isPlanLimit: boolean } | null>(null)
 
+  // Redirect coordination: only land on the dashboard once BOTH the scan
+  // animation has finished AND the analysis row is actually persisted.
+  // Otherwise a slow analysis (cold start / ad traffic) lets the timer win
+  // and the dashboard guard bounces the fresh user back to onboarding.
+  const [animationDone, setAnimationDone] = useState(false)
+  const [analysisDone, setAnalysisDone] = useState(false)
+
+  useEffect(() => {
+    if (animationDone && analysisDone) router.push('/dashboard')
+  }, [animationDone, analysisDone, router])
+
   // Autocomplete state
   const [suggestions, setSuggestions] = useState<Suggestion[]>([])
   const [loadingSuggestions, setLoadingSuggestions] = useState(false)
@@ -150,6 +161,8 @@ export default function OnboardingPage() {
   const handleSubmit = async () => {
     setIsSubmitting(true)
     setSubmitError(null)
+    setAnimationDone(false)
+    setAnalysisDone(false)
     setScanning(true)
 
     try {
@@ -172,8 +185,10 @@ export default function OnboardingPage() {
         return
       }
 
-      // Data is persisted to DB by the API; dashboard will read from DB directly
+      // Data is persisted to DB by the API; dashboard will read from DB directly.
+      // Mark analysis done — the effect redirects once the animation also finishes.
       await res.json()
+      setAnalysisDone(true)
     } catch {
       setSubmitError({ message: 'Impossible de contacter le serveur. Vérifiez votre connexion.', isPlanLimit: false })
       setScanning(false)
@@ -181,8 +196,10 @@ export default function OnboardingPage() {
     }
   }
 
+  // Animation reaching 100% no longer redirects on its own — it just signals
+  // readiness; the effect above decides when the dashboard is safe to load.
   const handleScanComplete = () => {
-    router.push('/dashboard')
+    setAnimationDone(true)
   }
 
   if (scanning) {
