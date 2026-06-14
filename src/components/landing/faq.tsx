@@ -8,27 +8,31 @@ import { ChevronDown } from 'lucide-react'
 const faqs = [
   {
     q: 'Comment est calculé le Score Local IA ?',
-    a: 'Le Score Local est calculé sur 100 points en analysant : le nombre et la qualité de vos avis Google (30 pts), vos photos (20 pts), la complétude de votre fiche Google (15 pts), votre activité de posts (10 pts), votre taux de réponse aux avis (15 pts) et la présence d\'un site web (10 pts).',
+    a: 'Le Score est calculé sur 100 points à partir de 6 critères publics de votre fiche Google : nombre et qualité des avis (30 pts), photos (20 pts), taux de réponse aux avis (15 pts), complétude de la fiche (15 pts), activité de posts (10 pts) et présence d\'un site web (10 pts). L\'IA recalcule ce score chaque semaine à partir des données réelles de votre fiche.',
   },
   {
-    q: 'Comment l\'IA trouve-t-elle mes concurrents ?',
-    a: 'Notre système identifie automatiquement les établissements de même catégorie dans votre zone géographique et sélectionne ceux avec le score le plus élevé. Vous pouvez aussi renseigner un concurrent spécifique pour le suivre directement.',
+    q: 'Mon Score Local peut-il vraiment améliorer ma position sur Google Maps ?',
+    a: 'Oui. Les facteurs que nous mesurons — avis, photos, complétude, réponses — sont exactement les signaux que Google utilise pour classer les établissements dans le Local Pack (les 3 résultats en haut de Maps). Progresser sur votre Score LocalScore.ai, c\'est directement améliorer votre référencement local.',
+  },
+  {
+    q: 'Comment l\'IA identifie-t-elle mes concurrents directs ?',
+    a: 'Lors de l\'onboarding, vous renseignez le nom et la ville de votre établissement. Notre système analyse automatiquement les établissements de même catégorie dans votre zone et sélectionne celui avec le score le plus élevé comme référence. Vous voyez précisément l\'écart et ce qu\'il faudrait faire pour le dépasser.',
+  },
+  {
+    q: 'Mon établissement a peu d\'avis — est-ce utile de commencer maintenant ?',
+    a: 'C\'est même le meilleur moment. Avec peu d\'avis, chaque nouvel avis fait bondir votre score. LocalScore.ai identifie chaque semaine vos gains les plus rapides selon votre situation réelle. Le coach IA vous dit exactement quoi faire en priorité pour rattraper vos concurrents.',
   },
   {
     q: 'À quelle fréquence mon score est-il mis à jour ?',
-    a: 'En plan Pro, votre score est mis à jour automatiquement chaque semaine. Vous recevez une notification avec l\'évolution et les nouvelles missions. En plan Gratuit, une seule analyse est disponible.',
+    a: 'En plan Pro, votre score est recalculé automatiquement chaque semaine. Vous pouvez aussi déclencher une nouvelle analyse à tout moment depuis votre tableau de bord. En plan Gratuit, une seule analyse est disponible — elle reste accessible indéfiniment.',
   },
   {
-    q: 'Mes données sont-elles sécurisées ?',
-    a: 'Oui. Toutes les données sont chiffrées et hébergées en Europe. Nous ne partageons jamais vos données avec des tiers. Vous pouvez demander la suppression de votre compte à tout moment.',
+    q: 'Puis-je suivre plusieurs établissements ?',
+    a: 'Le plan Pro inclut 1 établissement en suivi continu. Pour plusieurs établissements — franchise, réseau de points de vente — contactez-nous à juanrobin89@gmail.com. Nous proposons des offres adaptées dès 2 établissements.',
   },
   {
-    q: 'Puis-je annuler à tout moment ?',
-    a: 'Oui, sans engagement ni frais de résiliation. L\'annulation se fait en un clic depuis votre tableau de bord. Vous continuez à avoir accès jusqu\'à la fin de la période payée.',
-  },
-  {
-    q: 'Y a-t-il une période d\'essai ?',
-    a: 'Le plan Gratuit est disponible indéfiniment et inclut une analyse complète. Si vous passez au Pro et n\'êtes pas satisfait dans les 30 premiers jours, nous vous remboursons intégralement.',
+    q: 'Puis-je annuler mon abonnement à tout moment ?',
+    a: 'Oui, sans engagement ni frais de résiliation. L\'annulation se fait en un clic depuis votre tableau de bord (Paramètres → Gérer l\'abonnement). Vous continuez à bénéficier de toutes les fonctionnalités Pro jusqu\'à la fin de la période déjà payée.',
   },
 ]
 

@@ -20,7 +20,7 @@ export default function CguPage() {
               Les présentes Conditions Générales d'Utilisation (CGU) régissent l'accès et l'utilisation du service LocalScore.ai accessible à l'adresse <strong className="text-white">locentra.space</strong>.
             </p>
             <p className="mt-3">
-              LocalScore.ai est un service d'analyse de visibilité locale pour les commerces et établissements, proposant un Score IA, des recommandations personnalisées et un suivi de progression.
+              LocalScore.ai est un service d'analyse de visibilité locale pour les commerces et établissements, proposant un Score IA, des recommandations personnalisées et un suivi de progression. Éditeur du service — SIREN : <strong className="text-white">994 221 653</strong>.
             </p>
             <p className="mt-3">
               En vous inscrivant, vous acceptez sans réserve les présentes CGU.
@@ -67,7 +67,7 @@ export default function CguPage() {
               Vous pouvez résilier votre abonnement à tout moment depuis votre espace client (Paramètres → Gérer l'abonnement). La résiliation prend effet à la fin de la période en cours.
             </p>
             <p className="mt-3">
-              LocalScore.ai offre une <strong className="text-white">garantie de remboursement de 30 jours</strong> pour les nouveaux abonnés. Contactez-nous à juanrobin09@gmail.com pour en bénéficier.
+              Vous continuez à bénéficier de toutes les fonctionnalités Pro jusqu'à la fin de la période payée. Pour toute question relative à la facturation, contactez-nous à <a href="mailto:juanrobin89@gmail.com" className="text-primary-400 hover:underline">juanrobin89@gmail.com</a>.
             </p>
           </section>
 
@@ -116,7 +116,7 @@ export default function CguPage() {
           <section>
             <h2 className="text-white font-semibold text-lg mb-3">11. Contact</h2>
             <p>
-              Pour toute question : <a href="mailto:juanrobin09@gmail.com" className="text-primary-400 hover:underline">juanrobin09@gmail.com</a>
+              Pour toute question : <a href="mailto:juanrobin89@gmail.com" className="text-primary-400 hover:underline">juanrobin89@gmail.com</a>
             </p>
           </section>
         </div>

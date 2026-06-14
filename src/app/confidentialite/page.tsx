@@ -17,7 +17,7 @@ export default function ConfidentialitePage() {
           <section>
             <h2 className="text-white font-semibold text-lg mb-3">1. Responsable du traitement</h2>
             <p>
-              Le responsable du traitement des données personnelles est <strong className="text-white">LocalScore.ai</strong>, accessible à l'adresse <strong className="text-white">juanrobin09@gmail.com</strong>.
+              Le responsable du traitement des données personnelles est <strong className="text-white">LocalScore.ai</strong>, accessible à l'adresse <strong className="text-white">juanrobin89@gmail.com</strong>.
             </p>
           </section>
 
@@ -105,7 +105,7 @@ export default function ConfidentialitePage() {
             </ul>
             <p className="mt-3">
               Pour exercer ces droits, contactez-nous à{' '}
-              <a href="mailto:juanrobin09@gmail.com" className="text-primary-400 hover:underline">juanrobin09@gmail.com</a>.
+              <a href="mailto:juanrobin89@gmail.com" className="text-primary-400 hover:underline">juanrobin89@gmail.com</a>.
               Nous répondrons dans un délai de 30 jours.
             </p>
             <p className="mt-3">
@@ -137,7 +137,7 @@ export default function ConfidentialitePage() {
           <section>
             <h2 className="text-white font-semibold text-lg mb-3">10. Contact</h2>
             <p>
-              <a href="mailto:juanrobin09@gmail.com" className="text-primary-400 hover:underline">juanrobin09@gmail.com</a>
+              <a href="mailto:juanrobin89@gmail.com" className="text-primary-400 hover:underline">juanrobin89@gmail.com</a>
             </p>
           </section>
         </div>

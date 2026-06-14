@@ -205,7 +205,7 @@ export function Pricing() {
           className="mt-8 text-center"
         >
           <p className="text-dark-600 text-sm">
-            Paiement sécurisé par Stripe · Sans engagement · Remboursement 30 jours
+            Paiement sécurisé par Stripe · Sans engagement · Résiliation à tout moment
           </p>
         </motion.div>
 
@@ -219,7 +219,7 @@ export function Pricing() {
           <Mail className="w-4 h-4 text-primary-400 flex-shrink-0" />
           <span>
             Plusieurs établissements ou franchise ?{' '}
-            <a href="mailto:juanrobin09@gmail.com" className="text-primary-400 hover:text-primary-300 font-semibold transition-colors">
+            <a href="mailto:juanrobin89@gmail.com" className="text-primary-400 hover:text-primary-300 font-semibold transition-colors">
               Contactez-nous
             </a>
             {' '}pour une offre personnalisée.

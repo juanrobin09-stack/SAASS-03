@@ -41,7 +41,7 @@ export function Footer() {
                 { href: '/confidentialite', label: 'Confidentialité', external: false },
                 { href: '/cgu', label: 'CGU', external: false },
                 { href: '/mentions-legales', label: 'Mentions légales', external: false },
-                { href: 'mailto:juanrobin09@gmail.com', label: 'Nous contacter', external: true },
+                { href: 'mailto:juanrobin89@gmail.com', label: 'Nous contacter', external: true },
               ].map(({ href, label, external }) => (
                 <li key={href}>
                   {external ? (

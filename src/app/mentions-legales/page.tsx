@@ -19,7 +19,8 @@ export default function MentionsLegalesPage() {
             <p>Le site <strong className="text-white">locentra.space</strong> est édité par :</p>
             <div className="mt-3 p-4 bg-dark-900/50 border border-dark-800 rounded-xl space-y-1">
               <p><strong className="text-dark-200">Raison sociale :</strong> LocalScore.ai</p>
-              <p><strong className="text-dark-200">Email :</strong> juanrobin09@gmail.com</p>
+              <p><strong className="text-dark-200">SIREN :</strong> 994 221 653</p>
+              <p><strong className="text-dark-200">Email :</strong> juanrobin89@gmail.com</p>
               <p><strong className="text-dark-200">Site web :</strong> https://locentra.space</p>
             </div>
           </section>
@@ -72,7 +73,7 @@ export default function MentionsLegalesPage() {
             <h2 className="text-white font-semibold text-lg mb-3">7. Contact</h2>
             <p>
               Pour toute question relative aux présentes mentions légales, vous pouvez nous contacter à l'adresse suivante :{' '}
-              <a href="mailto:juanrobin09@gmail.com" className="text-primary-400 hover:underline">juanrobin09@gmail.com</a>
+              <a href="mailto:juanrobin89@gmail.com" className="text-primary-400 hover:underline">juanrobin89@gmail.com</a>
             </p>
           </section>
         </div>
