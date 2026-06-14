@@ -7,6 +7,7 @@ import { MapPin, Building2, Tag, Globe, Phone, Target, ArrowRight, Sparkles, Sea
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ScanAnimation } from '@/components/onboarding/scan-animation'
+import { Logo } from '@/components/ui/logo'
 
 const CATEGORIES = [
   'Restaurant', 'Boulangerie / Pâtisserie', 'Coiffeur / Salon de beauté',
@@ -218,11 +219,8 @@ export default function OnboardingPage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-10"
         >
-          <div className="flex items-center justify-center gap-2 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-glow">
-              <MapPin className="w-5 h-5 text-white" />
-            </div>
-            <span className="font-bold text-white text-xl">LocalScore.ai</span>
+          <div className="flex items-center justify-center mb-6">
+            <Logo href="/" size="md" />
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
