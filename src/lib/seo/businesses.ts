@@ -1,0 +1,123 @@
+// AUTO-GENERATED business taxonomy for programmatic SEO. Edit the generator, not this file.
+export type Sector =
+  | 'restauration'
+  | 'sante'
+  | 'beaute'
+  | 'batiment'
+  | 'commerce'
+  | 'auto'
+  | 'services'
+  | 'sport'
+  | 'hotellerie'
+  | 'education'
+
+export interface Business {
+  slug: string
+  singular: string
+  plural: string
+  article: 'un' | 'une'
+  sector: Sector
+}
+
+export const BUSINESSES: Business[] = [
+  { slug: "restaurant", singular: "restaurant", plural: "restaurants", article: "un", sector: "restauration" },
+  { slug: "pizzeria", singular: "pizzeria", plural: "pizzerias", article: "une", sector: "restauration" },
+  { slug: "boulangerie", singular: "boulangerie", plural: "boulangeries", article: "une", sector: "restauration" },
+  { slug: "patisserie", singular: "p\u00e2tisserie", plural: "p\u00e2tisseries", article: "une", sector: "restauration" },
+  { slug: "boucherie", singular: "boucherie", plural: "boucheries", article: "une", sector: "restauration" },
+  { slug: "traiteur", singular: "traiteur", plural: "traiteurs", article: "un", sector: "restauration" },
+  { slug: "cafe", singular: "caf\u00e9", plural: "caf\u00e9s", article: "un", sector: "restauration" },
+  { slug: "bar", singular: "bar", plural: "bars", article: "un", sector: "restauration" },
+  { slug: "brasserie", singular: "brasserie", plural: "brasseries", article: "une", sector: "restauration" },
+  { slug: "creperie", singular: "cr\u00eaperie", plural: "cr\u00eaperies", article: "une", sector: "restauration" },
+  { slug: "food-truck", singular: "food truck", plural: "food trucks", article: "un", sector: "restauration" },
+  { slug: "glacier", singular: "glacier", plural: "glaciers", article: "un", sector: "restauration" },
+  { slug: "caviste", singular: "caviste", plural: "cavistes", article: "un", sector: "restauration" },
+  { slug: "fromagerie", singular: "fromagerie", plural: "fromageries", article: "une", sector: "restauration" },
+  { slug: "dentiste", singular: "dentiste", plural: "dentistes", article: "un", sector: "sante" },
+  { slug: "medecin-generaliste", singular: "m\u00e9decin g\u00e9n\u00e9raliste", plural: "m\u00e9decins g\u00e9n\u00e9ralistes", article: "un", sector: "sante" },
+  { slug: "kinesitherapeute", singular: "kin\u00e9sith\u00e9rapeute", plural: "kin\u00e9sith\u00e9rapeutes", article: "un", sector: "sante" },
+  { slug: "osteopathe", singular: "ost\u00e9opathe", plural: "ost\u00e9opathes", article: "un", sector: "sante" },
+  { slug: "pharmacie", singular: "pharmacie", plural: "pharmacies", article: "une", sector: "sante" },
+  { slug: "opticien", singular: "opticien", plural: "opticiens", article: "un", sector: "sante" },
+  { slug: "podologue", singular: "podologue", plural: "podologues", article: "un", sector: "sante" },
+  { slug: "sage-femme", singular: "sage-femme", plural: "sages-femmes", article: "une", sector: "sante" },
+  { slug: "infirmier", singular: "infirmier", plural: "infirmiers", article: "un", sector: "sante" },
+  { slug: "orthophoniste", singular: "orthophoniste", plural: "orthophonistes", article: "un", sector: "sante" },
+  { slug: "veterinaire", singular: "v\u00e9t\u00e9rinaire", plural: "v\u00e9t\u00e9rinaires", article: "un", sector: "sante" },
+  { slug: "psychologue", singular: "psychologue", plural: "psychologues", article: "un", sector: "sante" },
+  { slug: "chirurgien-dentiste", singular: "chirurgien-dentiste", plural: "chirurgiens-dentistes", article: "un", sector: "sante" },
+  { slug: "orthodontiste", singular: "orthodontiste", plural: "orthodontistes", article: "un", sector: "sante" },
+  { slug: "coiffeur", singular: "coiffeur", plural: "coiffeurs", article: "un", sector: "beaute" },
+  { slug: "barbier", singular: "barbier", plural: "barbiers", article: "un", sector: "beaute" },
+  { slug: "institut-de-beaute", singular: "institut de beaut\u00e9", plural: "instituts de beaut\u00e9", article: "un", sector: "beaute" },
+  { slug: "onglerie", singular: "onglerie", plural: "ongleries", article: "une", sector: "beaute" },
+  { slug: "spa", singular: "spa", plural: "spas", article: "un", sector: "beaute" },
+  { slug: "salon-de-massage", singular: "salon de massage", plural: "salons de massage", article: "un", sector: "beaute" },
+  { slug: "tatoueur", singular: "tatoueur", plural: "tatoueurs", article: "un", sector: "beaute" },
+  { slug: "estheticienne", singular: "esth\u00e9ticienne", plural: "esth\u00e9ticiennes", article: "une", sector: "beaute" },
+  { slug: "salon-de-manucure", singular: "salon de manucure", plural: "salons de manucure", article: "un", sector: "beaute" },
+  { slug: "centre-d-epilation", singular: "centre d'\u00e9pilation", plural: "centres d'\u00e9pilation", article: "un", sector: "beaute" },
+  { slug: "maquilleuse-professionnelle", singular: "maquilleuse professionnelle", plural: "maquilleuses professionnelles", article: "une", sector: "beaute" },
+  { slug: "plombier", singular: "plombier", plural: "plombiers", article: "un", sector: "batiment" },
+  { slug: "electricien", singular: "\u00e9lectricien", plural: "\u00e9lectriciens", article: "un", sector: "batiment" },
+  { slug: "menuisier", singular: "menuisier", plural: "menuisiers", article: "un", sector: "batiment" },
+  { slug: "peintre-en-batiment", singular: "peintre en b\u00e2timent", plural: "peintres en b\u00e2timent", article: "un", sector: "batiment" },
+  { slug: "macon", singular: "ma\u00e7on", plural: "ma\u00e7ons", article: "un", sector: "batiment" },
+  { slug: "chauffagiste", singular: "chauffagiste", plural: "chauffagistes", article: "un", sector: "batiment" },
+  { slug: "carreleur", singular: "carreleur", plural: "carreleurs", article: "un", sector: "batiment" },
+  { slug: "serrurier", singular: "serrurier", plural: "serruriers", article: "un", sector: "batiment" },
+  { slug: "couvreur", singular: "couvreur", plural: "couvreurs", article: "un", sector: "batiment" },
+  { slug: "paysagiste", singular: "paysagiste", plural: "paysagistes", article: "un", sector: "batiment" },
+  { slug: "vitrier", singular: "vitrier", plural: "vitriers", article: "un", sector: "batiment" },
+  { slug: "plaquiste", singular: "plaquiste", plural: "plaquistes", article: "un", sector: "batiment" },
+  { slug: "artisan-renovation", singular: "artisan r\u00e9novation", plural: "artisans r\u00e9novation", article: "un", sector: "batiment" },
+  { slug: "fleuriste", singular: "fleuriste", plural: "fleuristes", article: "un", sector: "commerce" },
+  { slug: "bijouterie", singular: "bijouterie", plural: "bijouteries", article: "une", sector: "commerce" },
+  { slug: "librairie", singular: "librairie", plural: "librairies", article: "une", sector: "commerce" },
+  { slug: "magasin-de-vetements", singular: "magasin de v\u00eatements", plural: "magasins de v\u00eatements", article: "un", sector: "commerce" },
+  { slug: "magasin-de-chaussures", singular: "magasin de chaussures", plural: "magasins de chaussures", article: "un", sector: "commerce" },
+  { slug: "quincaillerie", singular: "quincaillerie", plural: "quincailleries", article: "une", sector: "commerce" },
+  { slug: "animalerie", singular: "animalerie", plural: "animaleries", article: "une", sector: "commerce" },
+  { slug: "magasin-de-meubles", singular: "magasin de meubles", plural: "magasins de meubles", article: "un", sector: "commerce" },
+  { slug: "epicerie-fine", singular: "\u00e9picerie fine", plural: "\u00e9piceries fines", article: "une", sector: "commerce" },
+  { slug: "magasin-de-jouets", singular: "magasin de jouets", plural: "magasins de jouets", article: "un", sector: "commerce" },
+  { slug: "magasin-bio", singular: "magasin bio", plural: "magasins bio", article: "un", sector: "commerce" },
+  { slug: "concept-store", singular: "concept store", plural: "concept stores", article: "un", sector: "commerce" },
+  { slug: "garage-automobile", singular: "garage automobile", plural: "garages automobiles", article: "un", sector: "auto" },
+  { slug: "carrosserie", singular: "carrosserie", plural: "carrosseries", article: "une", sector: "auto" },
+  { slug: "centre-de-lavage-auto", singular: "centre de lavage auto", plural: "centres de lavage auto", article: "un", sector: "auto" },
+  { slug: "centre-de-controle-technique", singular: "centre de contr\u00f4le technique", plural: "centres de contr\u00f4le technique", article: "un", sector: "auto" },
+  { slug: "auto-ecole", singular: "auto-\u00e9cole", plural: "auto-\u00e9coles", article: "une", sector: "auto" },
+  { slug: "centre-de-pneus", singular: "centre de pneus", plural: "centres de pneus", article: "un", sector: "auto" },
+  { slug: "loueur-de-voitures", singular: "loueur de voitures", plural: "loueurs de voitures", article: "un", sector: "auto" },
+  { slug: "reparateur-de-motos", singular: "r\u00e9parateur de motos", plural: "r\u00e9parateurs de motos", article: "un", sector: "auto" },
+  { slug: "agence-immobiliere", singular: "agence immobili\u00e8re", plural: "agences immobili\u00e8res", article: "une", sector: "services" },
+  { slug: "notaire", singular: "notaire", plural: "notaires", article: "un", sector: "services" },
+  { slug: "avocat", singular: "avocat", plural: "avocats", article: "un", sector: "services" },
+  { slug: "expert-comptable", singular: "expert-comptable", plural: "experts-comptables", article: "un", sector: "services" },
+  { slug: "courtier-en-assurance", singular: "courtier en assurance", plural: "courtiers en assurance", article: "un", sector: "services" },
+  { slug: "agence-de-voyage", singular: "agence de voyage", plural: "agences de voyage", article: "une", sector: "services" },
+  { slug: "agence-web", singular: "agence web", plural: "agences web", article: "une", sector: "services" },
+  { slug: "agence-de-marketing", singular: "agence de marketing", plural: "agences de marketing", article: "une", sector: "services" },
+  { slug: "imprimerie", singular: "imprimerie", plural: "imprimeries", article: "une", sector: "services" },
+  { slug: "pressing", singular: "pressing", plural: "pressings", article: "un", sector: "services" },
+  { slug: "cordonnier", singular: "cordonnier", plural: "cordonniers", article: "un", sector: "services" },
+  { slug: "salle-de-sport", singular: "salle de sport", plural: "salles de sport", article: "une", sector: "sport" },
+  { slug: "coach-sportif", singular: "coach sportif", plural: "coachs sportifs", article: "un", sector: "sport" },
+  { slug: "studio-de-yoga", singular: "studio de yoga", plural: "studios de yoga", article: "un", sector: "sport" },
+  { slug: "ecole-de-danse", singular: "\u00e9cole de danse", plural: "\u00e9coles de danse", article: "une", sector: "sport" },
+  { slug: "studio-de-pilates", singular: "studio de pilates", plural: "studios de pilates", article: "un", sector: "sport" },
+  { slug: "club-d-escalade", singular: "club d'escalade", plural: "clubs d'escalade", article: "un", sector: "sport" },
+  { slug: "ecole-de-musique", singular: "\u00e9cole de musique", plural: "\u00e9coles de musique", article: "une", sector: "sport" },
+  { slug: "salle-de-crossfit", singular: "salle de crossfit", plural: "salles de crossfit", article: "une", sector: "sport" },
+  { slug: "hotel", singular: "h\u00f4tel", plural: "h\u00f4tels", article: "un", sector: "hotellerie" },
+  { slug: "chambre-d-hotes", singular: "chambre d'h\u00f4tes", plural: "chambres d'h\u00f4tes", article: "une", sector: "hotellerie" },
+  { slug: "camping", singular: "camping", plural: "campings", article: "un", sector: "hotellerie" },
+  { slug: "gite", singular: "g\u00eete", plural: "g\u00eetes", article: "un", sector: "hotellerie" },
+  { slug: "auberge", singular: "auberge", plural: "auberges", article: "une", sector: "hotellerie" },
+  { slug: "creche", singular: "cr\u00e8che", plural: "cr\u00e8ches", article: "une", sector: "education" },
+  { slug: "centre-de-soutien-scolaire", singular: "centre de soutien scolaire", plural: "centres de soutien scolaire", article: "un", sector: "education" },
+  { slug: "photographe", singular: "photographe", plural: "photographes", article: "un", sector: "education" },
+  { slug: "agence-evenementielle", singular: "agence \u00e9v\u00e9nementielle", plural: "agences \u00e9v\u00e9nementielles", article: "une", sector: "education" },
+]
