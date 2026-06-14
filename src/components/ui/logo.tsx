@@ -10,13 +10,12 @@ interface LogoProps {
   className?: string
 }
 
-// Keep LogoMark for any code that imports it
 export function LogoMark({ size = 32, className }: { size?: number; className?: string }) {
   return (
     <Image
-      src="/logo-full.jpg"
+      src="/logo-transparent.png"
       alt="LocalScore.ai"
-      width={size * 2.7}
+      width={size}
       height={size}
       className={cn('object-contain', className)}
       priority
@@ -25,19 +24,26 @@ export function LogoMark({ size = 32, className }: { size?: number; className?: 
 }
 
 export function Logo({ href = '/', size = 'md', className }: LogoProps) {
-  const heights: Record<string, number> = { sm: 26, md: 32, lg: 40 }
-  const h = heights[size]
+  const sizes: Record<string, { icon: number; text: string }> = {
+    sm: { icon: 24, text: 'text-sm' },
+    md: { icon: 30, text: 'text-base' },
+    lg: { icon: 38, text: 'text-xl' },
+  }
+  const { icon, text } = sizes[size]
 
   const content = (
-    <span className={cn('flex items-center shrink-0', className)}>
+    <span className={cn('flex items-center gap-2 shrink-0', className)}>
       <Image
-        src="/logo-full.jpg"
-        alt="LocalScore.ai"
-        width={Math.round(h * 2.67)}
-        height={h}
+        src="/logo-transparent.png"
+        alt=""
+        width={icon}
+        height={icon}
         className="object-contain"
         priority
       />
+      <span className={cn('font-black text-white tracking-tight', text)}>
+        LocalScore<span className="text-primary-400">.ai</span>
+      </span>
     </span>
   )
 
